@@ -1,0 +1,72 @@
+[% INCLUDE 'doc-head-open.inc' %]
+ <title>Koha: Label Maker Plugin</title>
+[% INCLUDE 'doc-head-close.inc' %]
+</head>
+<body>
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+[% SET tables = [ 'item', 'biblio', 'biblioitem' ] %]
+[% SET barcode_types = [ 'Code39', 'UPCE', 'UPCA', 'QRcode', 'NW7', 'Matrix2of5', 'ITF', 'Industrial2of5', 'IATA2of5', 'EAN8', 'EAN13', 'COOP2of5' ] %]
+
+<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo; <a href="?class=[% CLASS %]&method=[% METHOD %]">Label Maker</a> &rsaquo; Layout wizard</div>
+
+<div id="doc3">
+    <form>
+        <input type="hidden" name="class" value="[% CLASS %]"/>
+        <input type="hidden" name="method" value="[% METHOD %]"/>
+
+        <input type="hidden" name="action" value="wizard_store" />
+        <input type="hidden" name="type" value="layouts" />
+
+        <fieldset class="rows">
+            <legend>Layout wizard</legend>
+
+            <ol>
+                <li><strong>All measurements should be entered in inches.</strong></li>
+
+                <li>
+                    <label for="name">Layout name: </label>
+                    <input type="text" id="name" name="name" />
+                </li>
+
+                <li>
+                    <label for="page_top_gutter">Top gutter: </label>
+                    <input type="number" min="0" step="0.001" id="page_top_gutter" name="page_top_gutter" />
+                    <span class="hint">Height from top of page to top of first label row</span>
+                </li>
+
+                <li>
+                    <label for="page_left_gutter">Left gutter: </label>
+                    <input type="number" min="0" step="0.001" id="page_left_gutter" name="page_left_gutter" />
+                    <span class="hint">Width of gap from left of page to left edge of first label column</span>
+                </li>
+
+                <li>
+                    <label for="label_width">Label width: </label>
+                    <input type="number" min="0" step="0.001" id="label_width" name="label_width" />
+                    <span class="hint">Width of label</span>
+                </li>
+
+                <li>
+                    <label for="label_height">Label height: </label>
+                    <input type="number" min="0" step="0.001" id="label_height" name="label_height" />
+                    <span class="hint">Height of label</span>
+                </li>
+
+                <li>
+                    <label for="label_gutter">Label gutter: </label>
+                    <input type="number" min="0" step="0.001" id="label_gutter" name="label_gutter" />
+                    <span class="hint">Distance between each column of labels</span>
+                </li>
+            </ol>
+        </fieldset>
+
+        <fieldset class="action">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-file"></i> Generate layout
+            </button>
+            <a href="?class=[% CLASS %]&method=[% METHOD %]">Cancel</a>
+        </fieldset>
+    </form>
+[% INCLUDE 'intranet-bottom.inc' %]

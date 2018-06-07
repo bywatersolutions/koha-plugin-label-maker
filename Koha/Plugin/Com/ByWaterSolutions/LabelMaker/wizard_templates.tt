@@ -1,0 +1,133 @@
+[% INCLUDE 'doc-head-open.inc' %]
+ <title>Koha: Label Maker Plugin</title>
+[% INCLUDE 'doc-head-close.inc' %]
+</head>
+<body>
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+[% SET tables = [ 'item', 'biblio', 'biblioitem' ] %]
+[% SET barcode_types = [ 'Code39', 'UPCE', 'UPCA', 'QRcode', 'NW7', 'Matrix2of5', 'ITF', 'Industrial2of5', 'IATA2of5', 'EAN8', 'EAN13', 'COOP2of5' ] %]
+
+<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo; <a href="?class=[% CLASS %]&method=[% METHOD %]">Label Maker</a> &rsaquo; Template wizard</div>
+
+<div id="doc3">
+    <form>
+        <input type="hidden" name="class" value="[% CLASS %]"/>
+        <input type="hidden" name="method" value="[% METHOD %]"/>
+
+        <input type="hidden" name="action" value="wizard_store" />
+        <input type="hidden" name="type" value="templates" />
+
+        <fieldset class="rows">
+            <legend>Template wizard</legend>
+
+            <ol>
+                <li>
+                    <label for="name">Template name: </label>
+                    <input type="text" id="name" name="name" />
+                </li>
+
+                <li>
+                    <label for="labels_count">Labels per page: </label>
+                    <input type="number" min="0" step="1" id="labels_count" name="labels_count" />
+                </li>
+
+                <fieldset class="rows">
+                    <legend>Label header</legend>
+
+                    <li>
+                        <label for="label_header">Field value: </label>
+                        <select id="label_header" name="label_header">
+                            [% FOREACH t IN tables %]
+                                [% SET cols = columns.$t %]
+                                [% FOREACH c IN cols %]
+                                    [% IF t == 'item' %][% SET parent = 'item' %][% END %]
+                                    [% IF t == 'biblio' %][% SET parent = 'item.biblio' %][% END %]
+                                    [% IF t == 'biblioitem' %][% SET parent = 'item.biblioitem' %][% END %]
+                                    <option value="[% parent  %].[% c %]">[% t %].[% c %]</option>
+                                [% END %]
+                            [% END %]
+                        </select>
+                    </li>
+
+                    <li>
+                        <label for="label_header_barcode">Barcode type: </label>
+                        <select id="label_header_barcode" name="label_header_barcode">
+                            <option value="">Not a barcode</option>
+                            [% FOREACH b IN barcode_types %]
+                                <option value="[% b %]">[% b %]</option>
+                            [% END %]
+                        </select>
+                    </li>
+                </fieldset>
+
+                <fieldset class="rows">
+                    <legend>Label center</legend>
+
+                    <li>
+                        <label for="label_center">Field value: </label>
+                        <select id="label_center" name="label_center">
+                            [% FOREACH t IN tables %]
+                                [% SET cols = columns.$t %]
+                                [% FOREACH c IN cols %]
+                                    [% IF t == 'item' %][% SET parent = 'item' %][% END %]
+                                    [% IF t == 'biblio' %][% SET parent = 'item.biblio' %][% END %]
+                                    [% IF t == 'biblioitem' %][% SET parent = 'item.biblioitem' %][% END %]
+                                    <option value="[% parent  %].[% c %]">[% t %].[% c %]</option>
+                                [% END %]
+                            [% END %]
+                        </select>
+                    </li>
+
+                    <li>
+                        <label for="label_center_barcode">Barcode type: </label>
+                        <select id="label_center_barcode" name="label_center_barcode">
+                            <option value="">Not a barcode</option>
+                            [% FOREACH b IN barcode_types %]
+                                <option value="[% b %]">[% b %]</option>
+                            [% END %]
+                        </select>
+                    </li>
+                </fieldset>
+
+                <fieldset class="rows">
+                    <legend>Label footer</legend>
+
+                    <li>
+                        <label for="label_footer">Field value: </label>
+                        <select id="label_footer" name="label_footer">
+                            [% FOREACH t IN tables %]
+                                [% SET cols = columns.$t %]
+                                [% FOREACH c IN cols %]
+                                    [% IF t == 'item' %][% SET parent = 'item' %][% END %]
+                                    [% IF t == 'biblio' %][% SET parent = 'item.biblio' %][% END %]
+                                    [% IF t == 'biblioitem' %][% SET parent = 'item.biblioitem' %][% END %]
+                                    <option value="[% parent  %].[% c %]">[% t %].[% c %]</option>
+                                [% END %]
+                            [% END %]
+                        </select>
+                    </li>
+
+                    <li>
+                        <label for="label_footer_barcode">Barcode type: </label>
+                        <select id="label_footer_barcode" name="label_footer_barcode">
+                            <option value="">Not a barcode</option>
+                            [% FOREACH b IN barcode_types %]
+                                <option value="[% b %]">[% b %]</option>
+                            [% END %]
+                        </select>
+                    </li>
+                </fieldset>
+
+            </ol>
+        </fieldset>
+
+        <fieldset class="action">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-file"></i> Generate template
+            </button>
+            <a href="?class=[% CLASS %]&method=[% METHOD %]">Cancel</a>
+        </fieldset>
+    </form>
+[% INCLUDE 'intranet-bottom.inc' %]

@@ -1,0 +1,55 @@
+[% INCLUDE 'doc-head-open.inc' %]
+ <title>Koha: Label Maker Plugin</title>
+[% INCLUDE 'doc-head-close.inc' %]
+</head>
+<body>
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo; <a href="?class=[% CLASS %]&method=[% METHOD %]">Label Maker</a> &rsaquo; Add/Edit</div>
+
+<div id="doc3">
+    <form>
+        <input type="hidden" name="class" value="[% CLASS %]"/>
+        <input type="hidden" name="method" value="[% METHOD %]"/>
+
+        <input type="hidden" name="action" value="store" />
+
+        <input type="hidden" name="type" value="[% type %]" />
+        [% UNLESS copy %]
+            <input type="hidden" name="id" value="[% data.id %]" />
+        [% END %]
+
+        <fieldset class="rows">
+            <legend>
+                [% IF type == 'layouts' %]
+                    Layout
+                [% ELSIF type == 'templates' %]
+                    Template
+                [% ELSIF type == 'printer_profiles' %]
+                    Printer profile
+                [% ELSE %]
+                    [% type %]
+                [% END %]
+            </legend>
+
+            <ol>
+                <li>
+                    <label for="name">Name: </label>
+                    <input type="text" id="name" name="name" value="[% data.name %]" />
+                </li>
+                <li>
+                    <label for="content">Content: </label>
+                    <textarea id="content" name="content" cols="100" rows="30">[% data.content %]</textarea>
+                </li>
+            </ol>
+        </fieldset>
+
+        <fieldset class="action">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-save"></i> Save
+            </button>
+            <a href="?class=[% CLASS %]&method=[% METHOD %]">Cancel</a>
+        </fieldset>
+    </form>
+[% INCLUDE 'intranet-bottom.inc' %]

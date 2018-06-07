@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <!-- Layout CSS -->
+        <style>
+            [% labels_layout.content %]
+        </style>
+
+        <!-- Printer profile CSS -->
+        <style>
+            [% labels_printer_profile.content %]
+        </style>
+    </head>
+
+    <body>
+        [% labels_template.content | eval %]
+    </body>
+</html>

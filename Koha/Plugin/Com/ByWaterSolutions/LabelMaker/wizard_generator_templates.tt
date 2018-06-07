@@ -1,0 +1,36 @@
+[% TAGS [- -] %]
+[% FOREACH item IN items %]
+    [% IF loop.index % [- labels_count -] == 0 %]
+        [% SET label_index = 1 %]
+        [% UNLESS loop.first %]
+            </span>
+        [% END %]
+        <span class="page">
+    [% END %]
+
+    <div class="label label[% label_index %]">
+      [-- IF label_header_barcode -]
+        <img src="/cgi-bin/koha/svc/barcode?barcode=[% [- label_header -] %]&type=[- label_header_barcode -]" />
+      [-- ELSE -]
+        [% [- label_header -] %]
+      [-- END -]
+
+        <br/>
+
+      [-- IF label_center_barcode -]
+        <img src="/cgi-bin/koha/svc/barcode?barcode=[% [- label_center -] %]&type=[- label_center_barcode -]" />
+      [-- ELSE -]
+        [% [- label_center -] %]
+      [-- END -]
+
+        <br/>
+
+      [-- IF label_footer_barcode -]
+        <img src="/cgi-bin/koha/svc/barcode?barcode=[% [- label_footer -] %]&type=[- label_footer_barcode -]" />
+      [-- ELSE -]
+        [% [- label_footer -] %]
+      [-- END -]
+    </div>
+    [% IF loop.last %]</span>[% END %]
+    [% SET label_index = label_index + 1 %]
+[% END %]

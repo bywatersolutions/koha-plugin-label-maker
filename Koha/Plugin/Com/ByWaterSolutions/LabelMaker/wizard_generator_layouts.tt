@@ -1,0 +1,38 @@
+html, body, div, span, h1 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+body {
+  width: 8.5in;
+}
+
+.page {
+  padding-top: [% page_top_gutter %]in; /* Height from top of page to top of first label row */
+  margin-left: [% page_left_gutter %]in; /* Width of gap from left of page to left edge of first label column */
+
+  page-break-after: always;
+  clear: left;
+  display: block;
+}
+
+.label {
+  width: [% label_width %]in; /* Width of actual label */
+  height: [% label_height %]in; /* Height of actual label */
+  margin-right: [% label_gutter %]in; /* Distance between each column of labels */
+
+  float: left;
+
+  text-align: center;
+  overflow: hidden;
+
+  /* Uncomment for testing and debugging */
+  /* outline: 1px dotted; */
+}
+
+.page-break  {
+  clear: left;
+  display: block;
+  page-break-after: always;
+}

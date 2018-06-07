@@ -1,0 +1,225 @@
+[% INCLUDE 'doc-head-open.inc' %]
+ <title>Koha: Label Maker Plugin</title>
+ [% INCLUDE 'doc-head-close.inc' %]
+ <script src="https://fastcdn.org/Readmore.js/2.1.0/readmore.min.js"></script>
+</head>
+<body>
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo; <a href="?class=[% CLASS %]&method=[% METHOD %]">Label Maker</a> &rsaquo; Home</div>
+
+<div id="doc3">
+    <div id="toolbar" class="btn-toolbar">
+        <div class="btn-group">
+            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> New <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=templates&id=[% l.id %]">Template</a></li>
+                <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=layouts&id=[% l.id %]">Layout</a></li>
+                <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=printer_profiles&id=[% l.id %]">Printer profile</a></li>
+                <li><a target="_blank" href="/cgi-bin/koha/labels/label-edit-batch.pl?op=new">Label batch</a></li>
+            </ul>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-magic"></i> New from wizard <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=wizard&type=templates&id=[% l.id %]">Template</a></li>
+                <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=wizard&type=layouts&id=[% l.id %]">Layout</a></li>
+                <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=wizard&type=printer_profiles&id=[% l.id %]">Printer profile</a></li>
+            </ul>
+        </div>
+
+        <a class="btn btn-default" href="?class=[% CLASS %]&method=[% METHOD %]&action=print">
+            <i class="fa fa-print"></i> Print batch
+        </a>
+    </div>
+
+    <div id="tabs">
+      <ul>
+        <li><a href="#templates-content">Templates</a></li>
+        <li><a href="#layouts-content">Layouts</a></li>
+        <li><a href="#printer_profiles-content">Printer profiles</a></li>
+      </ul>
+      <div id="templates-content">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Content</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                [% IF templates %]
+                    [% FOREACH t IN templates %]
+                        <tr>
+                            <td>[% t.name %]</td>
+                            <td><pre>[% t.content | html %]</pre></td>
+                            <td>
+                                <div class="dropdown">
+                                    <a class="btn btn-default dropdown-toggle" role="button" data-toggle="dropdown" href="#">
+                                        <i class="fa fa-plus"></i> Actions <b class="caret"></b>
+                                    </a>
+
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li>
+                                            <a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=templates&id=[% t.id %]">
+                                                <i class="fa fa-edit"></i> Edit
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a href="?class=[% CLASS %]&method=[% METHOD %]&action=copy&type=templates&id=[% t.id %]">
+                                                <i class="fa fa-copy"></i> Copy
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a href="?class=[% CLASS %]&method=[% METHOD %]&action=delete&type=templates&id=[% t.id %]" onclick="return confirm('Are you sure?')"
+                                                <i class="fa fa-trash"></i> Delete
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    [% END %]
+                [% ELSE %]
+                    <tr><td colspan="99">No templates exist</td></tr>
+                [% END %]
+            </tbody>
+        </table>
+      </div>
+
+      <div id="layouts-content">
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Content</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                [% IF layouts %]
+                    [% FOREACH l IN layouts %]
+                        <tr>
+                            <td>[% l.name %]</td>
+                            <td><pre>[% l.content %]</pre></td>
+                            <td>
+                                <div class="dropdown">
+                                    <a class="btn btn-default dropdown-toggle" role="button" data-toggle="dropdown" href="#">
+                                        <i class="fa fa-plus"></i> Actions <b class="caret"></b>
+                                    </a>
+
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li>
+                                            <a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=layouts&id=[% l.id %]">
+                                                <i class="fa fa-edit"></i> Edit
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a href="?class=[% CLASS %]&method=[% METHOD %]&action=delete&type=layouts&id=[% l.id %]" onclick="return confirm('Are you sure?')"
+                                                <i class="fa fa-trash"></i> Delete
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    [% END %]
+                [% ELSE %]
+                    <tr><td colspan="99">No layouts exist</td></tr>
+                [% END %]
+            </tbody>
+        </table>
+      </div>
+
+      <div id="printer_profiles-content">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Content</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                [% IF printer_profiles %]
+                    [% FOREACH p IN printer_profiles %]
+                        <tr>
+                            <td>[% p.name %]</td>
+                            <td><pre>[% p.content %]</pre></td>
+                            <td>
+                                <div class="dropdown">
+                                    <a class="btn btn-default dropdown-toggle" role="button" data-toggle="dropdown" href="#">
+                                        <i class="fa fa-plus"></i> Actions <b class="caret"></b>
+                                    </a>
+
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li>
+                                            <a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=printer_profiles&id=[% p.id %]">
+                                                <i class="fa fa-edit"></i> Edit
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a href="?class=[% CLASS %]&method=[% METHOD %]&action=delete&type=printer_profiles&id=[% p.id %]" onclick="return confirm('Are you sure?')"
+                                                <i class="fa fa-trash"></i> Delete
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    [% END %]
+                [% ELSE %]
+                    <tr><td colspan="99">No printer profiles exist</td></tr>
+                [% END %]
+            </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+        $(document).ready( function() {
+            const tab = "[% tab %]";
+            let index = 0;
+
+            switch(tab) {
+                case 'templates':
+                    index = 0;
+                    break;
+                case 'layouts':
+                    index = 1;
+                    break;
+                case 'printer_profiles':
+                    index = 2;
+                    break;
+                default:
+                    index = 0;
+            }
+
+            $('pre').readmore({
+                moreLink: '<a href="#">Show all code</a>',
+                lessLink: '<a href="#">Show less code</a>'
+            });
+
+            $("#tabs").tabs({
+                active: index,
+                activate: function( event, ui ) {
+                    $('pre').readmore({
+                        moreLink: '<a href="#">Show all code</a>',
+                        lessLink: '<a href="#">Show less code</a>'
+                    });
+                }
+            });
+        });
+    </script>
+[% INCLUDE 'intranet-bottom.inc' %]
