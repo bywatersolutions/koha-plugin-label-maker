@@ -26,7 +26,6 @@
             <ul class="dropdown-menu">
                 <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=wizard&type=templates&id=[% l.id %]">Template</a></li>
                 <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=wizard&type=layouts&id=[% l.id %]">Layout</a></li>
-                <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=wizard&type=printer_profiles&id=[% l.id %]">Printer profile</a></li>
             </ul>
         </div>
 
