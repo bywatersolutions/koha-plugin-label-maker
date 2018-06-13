@@ -160,8 +160,8 @@ body {
 }
 
 .label {
-  width: 8.5in; /* Width of actual label */
-  height: 2in; /* Height of actual label */
+  width: 2.625in; /* Width of actual label */
+  height: 1in; /* Height of actual label */
   margin-right: 0in; /* Distance between each column of labels */
 
   float: left;
