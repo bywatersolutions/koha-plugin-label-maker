@@ -137,6 +137,20 @@ sub install() {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     });
 
+    $dbh->do(q|
+        INSERT INTO `plugin_label_maker_layouts` (`id`, `name`, `content`)
+            VALUES
+                (1,'Avery 5630','html, body, div, span, h1 {\r\n  margin: 0;\r\n  padding: 0;\r\n  border: 0;\r\n}\r\n\r\nbody {\r\n  width: 8.5in;\r\n}\r\n\r\n.page {\r\n  padding-top: .5in; /* Height from top of page to top of first label row */\r\n  margin-left: .25in; /* Width of gap from left of page to left edge of first label column */\r\n\r\n  page-break-after: always;\r\n  clear: left;\r\n  display: block;\r\n}\r\n\r\n.label {\r\n  width: 8.5in; /* Width of actual label */\r\n  height: 2in; /* Height of actual label */\r\n  margin-right: 0in; /* Distance between each column of labels */\r\n\r\n  float: left;\r\n\r\n  text-align: center;\r\n  overflow: hidden;\r\n\r\n  /* Uncomment for testing and debugging */\r\n  outline: 1px dotted;\r\n}\r\n\r\n.page-break  {\r\n  clear: left;\r\n  display: block;\r\n  page-break-after: always;\r\n}\r\n'),
+                (2,'Basix 55-459-007','html, body, div, span, h1 {\r\n  margin: 0;\r\n  padding: 0;\r\n  border: 0;\r\n}\r\n\r\nbody {\r\n  width: 8.5in;\r\n}\r\n\r\n.page {\r\n  padding-top: .5in; /* Height from top of page to top of first label row */\r\n  margin-left: .25in; /* Width of gap from left of page to left edge of first label column */\r\n\r\n  page-break-after: always;\r\n  clear: left;\r\n  display: block;\r\n}\r\n\r\n.label {\r\n  width: 8.5in; /* Width of actual label */\r\n\r\n  margin-right: 0in; /* Distance between each column of labels */\r\n\r\n  float: left;\r\n  text-align: center;\r\n  overflow: hidden;\r\n\r\n  outline: 1px dotted white;\r\n}\r\n\r\n.left-label {\r\n  width: 1in;\r\n  height: 1in;\r\n  margin-right: .5in;\r\n\r\n\r\n  float: left;\r\n  text-align: center;\r\n  overflow: hidden;\r\n\r\n  background-color: red;\r\n}\r\n\r\n.center-label {\r\n  width: 3in;\r\n  height: 1in;\r\n  margin-right: .5in;\r\n\r\n  float: left;\r\n  text-align: center;\r\n  overflow: hidden;\r\n\r\n  background-color: green;\r\n}\r\n\r\n.right-label {\r\n  width: 3in; \r\n  height: 1in;\r\n\r\n  float: left;\r\n  text-align: center;\r\n  overflow: hidden;\r\n\r\n  background-color: blue;\r\n}\r\n');
+    |);
+
+    $dbh->do(q|
+        INSERT INTO `plugin_label_maker_templates` (`id`, `name`, `content`)
+            VALUES
+                (1,'Avery Standard Labels','[% FOREACH item IN items %]\r\n    [% IF loop.index % 30 == 0 %]\r\n        [% SET label_index = 1 %]\r\n        [% UNLESS loop.first %]\r\n            </span>\r\n        [% END %]\r\n        <span class=\"page\">\r\n    [% END %]\r\n\r\n    <div class=\"label label[% label_index %]\">\r\n        [% item.biblio.title %]\r\n\r\n        <br/>\r\n\r\n        <img src=\"/cgi-bin/koha/svc/barcode?barcode=[% item.barcode %]&type=Matrix2of5\" />\r\n\r\n        <br/>\r\n\r\n        [% item.itemnumber %]\r\n    </div>\r\n    [% IF loop.last %]</span>[% END %]\r\n    [% SET label_index = label_index + 1 %]\r\n[% END %]\r\n'),
+                (2,'Basix 55-459-007','[% FOREACH item IN items %]\r\n    [% IF loop.index % 8 == 0 %]\r\n        [% SET label_index = 1 %]\r\n        [% UNLESS loop.first %]\r\n            </span>\r\n        [% END %]\r\n        <span class=\"page\">\r\n    [% END %]\r\n\r\n    <div class=\"label label[% label_index %]\">\r\n       <div class=\"left-label\">\r\n           [% item.biblio.title %]\r\n       </div>\r\n\r\n       <div class=\"center-label\">\r\n           [% item.biblio.title %]\r\n           <br/>\r\n           <img src=\"/cgi-bin/koha/svc/barcode?barcode=[% item.barcode %]&type=Matrix2of5\" />\r\n       </div>\r\n\r\n       <div class=\"right-label\">\r\n           [% item.biblio.title %]\r\n           <br/>\r\n           <img src=\"/cgi-bin/koha/svc/barcode?barcode=[% item.barcode %]&type=Matrix2of5\" />\r\n       </div>\r\n    </div>\r\n    [% IF loop.last %]</span>[% END %]\r\n    [% SET label_index = label_index + 1 %]\r\n[% END %]\r\n');
+    |);
+
     return 1;
 }
 
