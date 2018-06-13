@@ -124,6 +124,12 @@
                                         </li>
 
                                         <li>
+                                            <a href="?class=[% CLASS %]&method=[% METHOD %]&action=copy&type=layouts&id=[% l.id %]">
+                                                <i class="fa fa-copy"></i> Copy
+                                            </a>
+                                        </li>
+
+                                        <li>
                                             <a href="?class=[% CLASS %]&method=[% METHOD %]&action=delete&type=layouts&id=[% l.id %]" onclick="return confirm('Are you sure?')"
                                                 <i class="fa fa-trash"></i> Delete
                                             </a>
@@ -166,6 +172,12 @@
                                         <li>
                                             <a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=printer_profiles&id=[% p.id %]">
                                                 <i class="fa fa-edit"></i> Edit
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a href="?class=[% CLASS %]&method=[% METHOD %]&action=copy&type=printer_profiles&id=[% p.id %]">
+                                                <i class="fa fa-copy"></i> Copy
                                             </a>
                                         </li>
 
