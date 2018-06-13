@@ -55,6 +55,11 @@
                         [% END %]
                     </select>
                 </li>
+
+                <li>
+                    <label for="starting_label">Starting label: </label>
+                    <input type="number" min="1" step="1" id="starting_label" name="starting_label" value="1">
+                </li>
             </ol>
         </fieldset>
 

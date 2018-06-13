@@ -50,6 +50,7 @@ sub tool {
         my $template        = $cgi->param('template');
         my $layout          = $cgi->param('layout');
         my $printer_profile = $cgi->param('printer_profile');
+        my $starting_label  = $cgi->param('starting_label');
 
         if ( $batch && $template && $layout ) {
             $self->print_labels(
@@ -57,7 +58,8 @@ sub tool {
                     batch           => $batch,
                     template        => $template,
                     layout          => $layout,
-                    printer_profile => $printer_profile
+                    printer_profile => $printer_profile,
+                    starting_label  => $starting_label,
                 }
             );
         }
@@ -456,6 +458,7 @@ sub print_labels {
     my $template_id        = $args->{template};
     my $layout_id          = $args->{layout};
     my $printer_profile_id = $args->{printer_profile};
+    my $starting_label     = $args->{starting_label} || 1;
 
     my $dbh = C4::Context->dbh;
 
@@ -475,7 +478,8 @@ sub print_labels {
         undef, $printer_profile_id );
 
     my @items;
-    my @labels;
+
+    push( @items, undef ) for ( 1 .. $starting_label - 1 );
     foreach my $b (@$batch) {
         my $item = Koha::Items->find( $b->{item_number} );
         push( @items, $item );
