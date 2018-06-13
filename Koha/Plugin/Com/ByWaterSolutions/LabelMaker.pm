@@ -138,9 +138,9 @@ sub install() {
     });
 
     $dbh->do(q|
-        INSERT INTO `plugin_label_maker_layouts` (`id`, `name`, `content`)
-            VALUES
-                (1,'Avery 5630','html, body, div, span, h1 {
+        INSERT INTO `plugin_label_maker_layouts` (`id`, `name`, `content`) VALUES
+
+(1,'Avery 5630','html, body, div, span, h1 {
   margin: 0;
   padding: 0;
   border: 0;
@@ -178,7 +178,9 @@ body {
   display: block;
   page-break-after: always;
 }'),
-                (2,'Basix 55-459-007','html, body, div, span, h1 {
+
+
+(2,'Basix 55-459-007','html, body, div, span, h1 {
   margin: 0;
   padding: 0;
   border: 0;
@@ -247,9 +249,8 @@ body {
     |);
 
     $dbh->do(q|
-        INSERT INTO `plugin_label_maker_templates` (`id`, `name`, `content`)
-            VALUES
-                (1,'Avery Standard Labels','[% FOREACH item IN items %]
+        INSERT INTO `plugin_label_maker_templates` (`id`, `name`, `content`) VALUES
+(1,'Avery Standard Labels','[% FOREACH item IN items %]
     [% IF loop.index % 30 == 0 %]
         [% SET label_index = 1 %]
         [% UNLESS loop.first %]
@@ -272,7 +273,9 @@ body {
     [% IF loop.last %]</span>[% END %]
     [% SET label_index = label_index + 1 %]
 [% END %]'),
-               (2,'Basix 55-459-007','[% FOREACH item IN items %]
+
+
+(2,'Basix 55-459-007','[% FOREACH item IN items %]
     [% IF loop.index % 8 == 0 %]
         [% SET label_index = 1 %]
         [% UNLESS loop.first %]
