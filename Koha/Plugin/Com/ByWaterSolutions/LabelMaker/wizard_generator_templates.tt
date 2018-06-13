@@ -10,7 +10,9 @@
 
     <div class="label label[% label_index %]">
       [-- IF label_header_barcode -]
-        <img src="/cgi-bin/koha/svc/barcode?barcode=[% [- label_header -] %]&type=[- label_header_barcode -]" />
+        [% IF [- label_header -] %]
+            <img src="/cgi-bin/koha/svc/barcode?barcode=[% [- label_header -] %]&type=[- label_header_barcode -]" />
+        [% END %]
       [-- ELSE -]
         [% [- label_header -] %]
       [-- END -]
@@ -18,7 +20,9 @@
         <br/>
 
       [-- IF label_center_barcode -]
-        <img src="/cgi-bin/koha/svc/barcode?barcode=[% [- label_center -] %]&type=[- label_center_barcode -]" />
+        [% IF [- label_header -] %]
+            <img src="/cgi-bin/koha/svc/barcode?barcode=[% [- label_center -] %]&type=[- label_center_barcode -]" />
+        [% END %]
       [-- ELSE -]
         [% [- label_center -] %]
       [-- END -]
@@ -26,7 +30,9 @@
         <br/>
 
       [-- IF label_footer_barcode -]
-        <img src="/cgi-bin/koha/svc/barcode?barcode=[% [- label_footer -] %]&type=[- label_footer_barcode -]" />
+        [% IF [- label_header -] %]
+            <img src="/cgi-bin/koha/svc/barcode?barcode=[% [- label_footer -] %]&type=[- label_footer_barcode -]" />
+        [% END %]
       [-- ELSE -]
         [% [- label_footer -] %]
       [-- END -]

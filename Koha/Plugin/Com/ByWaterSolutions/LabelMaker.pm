@@ -110,207 +110,6 @@ sub tool {
     }
 }
 
-sub install() {
-    my ( $self, $args ) = @_;
-
-    my $dbh = C4::Context->dbh;
-
-    $dbh->do(q{
-        CREATE TABLE plugin_label_maker_templates (
-        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        content TEXT
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    });
-
-    $dbh->do(q{
-        CREATE TABLE plugin_label_maker_layouts (
-        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        content TEXT
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    });
-
-    $dbh->do(q{
-        CREATE TABLE plugin_label_maker_printer_profiles (
-        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        content TEXT
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    });
-
-    $dbh->do(q|
-        INSERT INTO `plugin_label_maker_layouts` (`id`, `name`, `content`) VALUES
-
-(1,'Avery 5630','html, body, div, span, h1 {
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-
-body {
-  width: 8.5in;
-}
-
-.page {
-  padding-top: .5in; /* Height from top of page to top of first label row */
-  margin-left: .25in; /* Width of gap from left of page to left edge of first label column */
-
-  page-break-after: always;
-  clear: left;
-  display: block;
-}
-
-.label {
-  width: 2.625in; /* Width of actual label */
-  height: 1in; /* Height of actual label */
-  margin-right: 0in; /* Distance between each column of labels */
-
-  float: left;
-
-  text-align: center;
-  overflow: hidden;
-
-  /* Uncomment for testing and debugging */
-  outline: 1px dotted;
-}
-
-.page-break  {
-  clear: left;
-  display: block;
-  page-break-after: always;
-}'),
-
-
-(2,'Basix 55-459-007','html, body, div, span, h1 {
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-
-body {
-  width: 8.5in;
-}
-
-.page {
-  padding-top: .5in; /* Height from top of page to top of first label row */
-  margin-left: .25in; /* Width of gap from left of page to left edge of first label column */
-
-  page-break-after: always;
-  clear: left;
-  display: block;
-}
-
-.label {
-  width: 8.5in; /* Width of actual label */
-
-  margin-right: 0in; /* Distance between each column of labels */
-
-  float: left;
-  text-align: center;
-  overflow: hidden;
-
-  outline: 1px dotted white;
-}
-
-.left-label {
-  width: 1in;
-  height: 1in;
-  margin-right: .5in;
-
-
-  float: left;
-  text-align: center;
-  overflow: hidden;
-
-  background-color: red;
-}
-
-.center-label {
-  width: 3in;
-  height: 1in;
-  margin-right: .5in;
-
-  float: left;
-  text-align: center;
-  overflow: hidden;
-
-  background-color: green;
-}
-
-.right-label {
-  width: 3in; 
-  height: 1in;
-
-  float: left;
-  text-align: center;
-  overflow: hidden;
-
-  background-color: blue;
-}');
-    |);
-
-    $dbh->do(q|
-        INSERT INTO `plugin_label_maker_templates` (`id`, `name`, `content`) VALUES
-(1,'Avery Standard Labels','[% FOREACH item IN items %]
-    [% IF loop.index % 30 == 0 %]
-        [% SET label_index = 1 %]
-        [% UNLESS loop.first %]
-            </span>
-        [% END %]
-        <span class="page">
-    [% END %]
-
-    <div class="label label[% label_index %]">
-        [% item.biblio.title %]
-
-        <br/>
-
-        <img src="/cgi-bin/koha/svc/barcode?barcode=[% item.barcode %]&type=Matrix2of5" />
-
-        <br/>
-
-        [% item.itemnumber %]
-    </div>
-    [% IF loop.last %]</span>[% END %]
-    [% SET label_index = label_index + 1 %]
-[% END %]'),
-
-
-(2,'Basix 55-459-007','[% FOREACH item IN items %]
-    [% IF loop.index % 8 == 0 %]
-        [% SET label_index = 1 %]
-        [% UNLESS loop.first %]
-            </span>
-        [% END %]
-        <span class="page">
-    [% END %]
-
-    <div class="label label[% label_index %]">
-       <div class="left-label">
-           [% item.biblio.title %]
-       </div>
-
-       <div class="center-label">
-           [% item.biblio.title %]
-           <br/>
-           <img src="/cgi-bin/koha/svc/barcode?barcode=[% item.barcode %]&type=Matrix2of5" />
-       </div>
-
-       <div class="right-label">
-           [% item.biblio.title %]
-           <br/>
-           <img src="/cgi-bin/koha/svc/barcode?barcode=[% item.barcode %]&type=Matrix2of5" />
-       </div>
-    </div>
-    [% IF loop.last %]</span>[% END %]
-    [% SET label_index = label_index + 1 %]
-[% END %]');
-    |);
-
-    return 1;
-}
-
 sub uninstall() {
     my ( $self, $args ) = @_;
 
@@ -542,6 +341,213 @@ sub wizard_store {
     $dbh->do( $query, undef, $name, $content );
 
     $self->label_maker_home();
+}
+
+sub install() {
+    my ( $self, $args ) = @_;
+
+    my $dbh = C4::Context->dbh;
+
+    $dbh->do(q{
+        CREATE TABLE plugin_label_maker_templates (
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        content TEXT
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    });
+
+    $dbh->do(q{
+        CREATE TABLE plugin_label_maker_layouts (
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        content TEXT
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    });
+
+    $dbh->do(q{
+        CREATE TABLE plugin_label_maker_printer_profiles (
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        content TEXT
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    });
+
+    $dbh->do(q|
+        INSERT INTO `plugin_label_maker_layouts` (`id`, `name`, `content`) VALUES
+
+(1,'Avery 5630','html, body, div, span, h1 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+body {
+  width: 8.5in;
+}
+
+.page {
+  padding-top: .5in; /* Height from top of page to top of first label row */
+  margin-left: .25in; /* Width of gap from left of page to left edge of first label column */
+
+  page-break-after: always;
+  clear: left;
+  display: block;
+}
+
+.label {
+  width: 2.625in; /* Width of actual label */
+  height: 1in; /* Height of actual label */
+  margin-right: 0in; /* Distance between each column of labels */
+
+  float: left;
+
+  text-align: center;
+  overflow: hidden;
+
+  /* Uncomment for testing and debugging */
+  outline: 1px dotted;
+}
+
+.page-break  {
+  clear: left;
+  display: block;
+  page-break-after: always;
+}'),
+
+
+(2,'Basix 55-459-007','html, body, div, span, h1 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+body {
+  width: 8.5in;
+}
+
+.page {
+  padding-top: .5in; /* Height from top of page to top of first label row */
+  margin-left: .25in; /* Width of gap from left of page to left edge of first label column */
+
+  page-break-after: always;
+  clear: left;
+  display: block;
+}
+
+.label {
+  width: 8.5in; /* Width of actual label */
+
+  margin-right: 0in; /* Distance between each column of labels */
+
+  float: left;
+  text-align: center;
+  overflow: hidden;
+
+  outline: 1px dotted white;
+}
+
+.left-label {
+  width: 1in;
+  height: 1in;
+  margin-right: .5in;
+
+
+  float: left;
+  text-align: center;
+  overflow: hidden;
+
+  background-color: red;
+}
+
+.center-label {
+  width: 3in;
+  height: 1in;
+  margin-right: .5in;
+
+  float: left;
+  text-align: center;
+  overflow: hidden;
+
+  background-color: green;
+}
+
+.right-label {
+  width: 3in; 
+  height: 1in;
+
+  float: left;
+  text-align: center;
+  overflow: hidden;
+
+  background-color: blue;
+}');
+    |);
+
+    $dbh->do(q|
+        INSERT INTO `plugin_label_maker_templates` (`id`, `name`, `content`) VALUES
+(1,'Avery Standard Labels','[% FOREACH item IN items %]
+    [% IF loop.index % 30 == 0 %]
+        [% SET label_index = 1 %]
+        [% UNLESS loop.first %]
+            </span>
+        [% END %]
+        <span class="page">
+    [% END %]
+
+    <div class="label label[% label_index %]">
+        [% item.biblio.title %]
+
+        <br/>
+
+        [% IF item.barcode %]
+            <img src="/cgi-bin/koha/svc/barcode?barcode=[% item.barcode %]&type=Matrix2of5" />
+        [% END %]
+
+        <br/>
+
+        [% item.itemnumber %]
+    </div>
+    [% IF loop.last %]</span>[% END %]
+    [% SET label_index = label_index + 1 %]
+[% END %]'),
+
+
+(2,'Basix 55-459-007','[% FOREACH item IN items %]
+    [% IF loop.index % 8 == 0 %]
+        [% SET label_index = 1 %]
+        [% UNLESS loop.first %]
+            </span>
+        [% END %]
+        <span class="page">
+    [% END %]
+
+    <div class="label label[% label_index %]">
+       <div class="left-label">
+           [% item.biblio.title %]
+       </div>
+
+       <div class="center-label">
+           [% item.biblio.title %]
+           <br/>
+           [% IF item.barcode %]
+               <img src="/cgi-bin/koha/svc/barcode?barcode=[% item.barcode %]&type=Matrix2of5" />
+           [% END %]
+       </div>
+
+       <div class="right-label">
+           [% item.biblio.title %]
+           <br/>
+           [% IF item.barcode %]
+               <img src="/cgi-bin/koha/svc/barcode?barcode=[% item.barcode %]&type=Matrix2of5" />
+            [% END %]
+       </div>
+    </div>
+    [% IF loop.last %]</span>[% END %]
+    [% SET label_index = label_index + 1 %]
+[% END %]');
+    |);
+
+    return 1;
 }
 
 1;
