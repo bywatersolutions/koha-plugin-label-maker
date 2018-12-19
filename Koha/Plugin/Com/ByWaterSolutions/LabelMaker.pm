@@ -296,6 +296,26 @@ sub print_labels {
     $self->output_html( $page_template->output() );
 }
 
+=head2
+
+    This method below attaches to any Koha::Item objects,
+    modifying them by adding a marc() method that will return
+    the MARC::Record object related to this item's record with
+    item MARC embedded
+
+=cut
+
+sub Koha::Item::marc {
+    my ($item) = @_;
+    my $marc = C4::Biblio::GetMarcBiblio(
+        {
+            biblionumber => $item->biblionumber,
+            embed_items  => 1,
+        }
+    );
+    return $marc;
+}
+
 sub wizard {
     my ( $self, $args ) = @_;
     my $type = $args->{type};
