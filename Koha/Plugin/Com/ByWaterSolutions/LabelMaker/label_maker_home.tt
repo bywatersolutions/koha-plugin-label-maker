@@ -1,7 +1,7 @@
 [% INCLUDE 'doc-head-open.inc' %]
  <title>Koha: Label Maker Plugin</title>
  [% INCLUDE 'doc-head-close.inc' %]
- <script src="https://fastcdn.org/Readmore.js/2.1.0/readmore.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/Readmore.js/2.2.1/readmore.min.js"></script>
 </head>
 <body>
 [% INCLUDE 'header.inc' %]
