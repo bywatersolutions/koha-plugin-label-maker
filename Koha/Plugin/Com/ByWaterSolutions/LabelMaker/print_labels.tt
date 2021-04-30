@@ -3,8 +3,22 @@
         <!-- Layout CSS -->
         <style>
             [% labels_layout.content %]
-        </style>
+            #toggleEdit {
+                position: absolute;
+                right: 0;
+                top: 0;
+            }
 
+            @media print {
+                #toggleEdit {
+                        display: none !important;
+                }
+                .editable {
+                    box-shadow: none;
+                }
+            }
+        </style>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
         <!-- Printer profile CSS -->
         <style>
             [% labels_printer_profile.content %]
@@ -12,6 +26,21 @@
     </head>
 
     <body>
-        [% labels_template.content | eval %]
+        <button id="toggleEdit">
+            <i class="fa fa-lock" aria-hidden="true"></i>
+        </button>
+        <div id="labelContentContainer">
+            [% labels_template.content | eval %]
+        </div>
     </body>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>
+        $('#toggleEdit').click( function() {
+                $('#labelContentContainer').attr('contenteditable', function(index, attr){
+                    return attr == 'true' ? null : 'true';
+                });
+
+                $('#toggleEdit .fa').toggleClass('fa-lock').toggleClass('fa-unlock');
+        })
+    </script>
 </html>
