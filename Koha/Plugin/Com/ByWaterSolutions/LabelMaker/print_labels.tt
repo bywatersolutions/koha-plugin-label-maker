@@ -3,7 +3,7 @@
         <!-- Layout CSS -->
         <style>
             [% labels_layout.content %]
-            #toggleEdit {
+            #editor-tools {
                 position: absolute;
                 right: 0;
                 top: 0;
@@ -11,6 +11,9 @@
 
             @media print {
                 #toggleEdit {
+                        display: none !important;
+                }
+                #font-editor {
                         display: none !important;
                 }
                 .editable {
@@ -26,21 +29,83 @@
     </head>
 
     <body>
-        <button id="toggleEdit">
-            <i class="fa fa-lock" aria-hidden="true"></i>
-        </button>
-        <div id="labelContentContainer">
+        <div id="editor-tools">
+            <button id="toggleEdit"><i class="fa fa-lock" aria-hidden="true"></i></button>
+            <div id="font-editor" style="display: none;">
+                <label>Font Size: </label>
+                <select id="fontSize" >
+                    <option value="10">10px</option>
+                    <option value="11">11px</option>
+                    <option value="12">12px</option>
+                    <option value="13">13px</option>
+                    <option value="14">14px</option>
+                    <option value="15">15px</option>
+                    <option value="16">16px</option>
+                    <option value="17">17px</option>
+                    <option value="18">18px</option>
+                    <option value="19">19px</option>
+                    <option value="20">20px</option>
+                    <option value="22">22px</option>
+                    <option value="30">30px</option>
+                    <option value="35">35px</option>
+                    <option value="40">40px</option>
+                    <option value="45">45px</option>
+                </select>
+            </div>
+        </div>
+        <div id="editor">
             [% labels_template.content | eval %]
         </div>
     </body>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script>
         $('#toggleEdit').click( function() {
-                $('#labelContentContainer').attr('contenteditable', function(index, attr){
+                $('#editor').attr('contenteditable', function(index, attr){
                     return attr == 'true' ? null : 'true';
                 });
 
                 $('#toggleEdit .fa').toggleClass('fa-lock').toggleClass('fa-unlock');
+                $('#font-editor').toggle();
         })
+
+        var activeFontSize;
+        var oDoc = document.getElementById("editor");
+        var style = document.createElement("style");
+        document.body.appendChild(style);
+        
+        function setFontSize(value){
+            $editor.focus();
+            document.execCommand("fontsize", false, 20);
+            activeFontSize = value;
+            createStyle();
+        }
+
+        function createStyle(){
+            style.innerHTML = '#editor font[size="7"]{font-size: '+activeFontSize+'px}';
+        }
+
+        function updateToolBar(args){
+            $fontSize.val(args.fontsize);
+        }
+
+        var $fontSize = $("#fontSize");
+        var $editor = $("#editor");
+
+        $fontSize.on("change", ()=>{
+            setFontSize($fontSize.val())
+        })
+
+        $editor.on("keyup mousedown", (e)=>{
+            try{
+                var fontsize = $(window.getSelection().getRangeAt(0).startContainer.parentNode).css("font-size")
+                fontsize = fontsize.replace("px", "");
+                updateToolBar({fontsize})
+            }catch(e){
+                console.log("exception", e)
+            }
+        })
+        oDoc.focus();
+        setFontSize(30);
+		
     </script>
 </html>
