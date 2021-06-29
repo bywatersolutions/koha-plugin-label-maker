@@ -1,3 +1,4 @@
+[% USE Branches %]
 [% INCLUDE 'doc-head-open.inc' %]
  <title>Koha: Label Maker Plugin</title>
 [% INCLUDE 'doc-head-close.inc' %]
@@ -17,13 +18,15 @@
 
         <fieldset class="rows">
             <legend>Print labels</legend>
-
             <ol>
                 <li>
                     <label for="batch">Batch: </label>
                     <select id="batch" name="batch">
                         [% FOREACH b IN batches %]
-                            <option value="[% b.batch_id %]">[% b.batch_id %] ([% b.items_count %])</option>
+                        [% logged_in_branchcode = Branches.GetLoggedInBranchcode() %]
+                            [% IF b.branch_code == logged_in_branchcode %]
+                                    <option class="[% b.branch_code | html %]" value="[% b.batch_id %]">[% b.branch_code | html%]: Batch #[% b.batch_id %] ([% b.items_count %])</option>
+                            [% END %]
                         [% END %]
                     </select>
                 </li>

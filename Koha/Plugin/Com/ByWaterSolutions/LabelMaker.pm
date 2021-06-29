@@ -236,7 +236,7 @@ sub print_labels_form {
 
     my $batches =
       $dbh->selectall_arrayref(
-        'SELECT batch_id, COUNT(batch_id) AS items_count FROM creator_batches WHERE creator = "Labels" GROUP BY batch_id ORDER BY timestamp DESC',
+        'SELECT batch_id, COUNT(batch_id) AS items_count, branch_code FROM creator_batches WHERE creator = "Labels" GROUP BY batch_id ORDER BY timestamp DESC',
         { Slice => {} } );
 
     my $template = $self->get_template( { file => 'print_labels_form.tt' } );
