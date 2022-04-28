@@ -1,0 +1,68 @@
+[% USE Branches %]
+[% INCLUDE 'doc-head-open.inc' %]
+ <title>Koha: Label Maker Plugin</title>
+[% INCLUDE 'doc-head-close.inc' %]
+</head>
+<body>
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo; <a href="?class=[% CLASS %]&method=[% METHOD %]">Label Maker</a> &rsaquo; Print labels</div>
+
+<div id="doc3">
+    <form>
+        <input type="hidden" name="class" value="[% CLASS %]"/>
+        <input type="hidden" name="method" value="[% METHOD %]"/>
+
+        <input type="hidden" name="action" value="quickprint" />
+
+        <fieldset class="rows">
+            <legend>Print quick labels</legend>
+            <ol>
+                <li>
+                    <label for="barcode">Barcode: </label>
+                    <input type="text" id="barcode" name="barcode" />
+                </li>
+                <li>
+                    <label for="template">Template: </label>
+                    <select id="template" name="template">
+                        [% FOREACH t IN templates %]
+                            <option value="[% t.id %]">[% t.name %]</option>
+                        [% END %]
+                    </select>
+                </li>
+
+                <li>
+                    <label for="layout">Layout: </label>
+                    <select id="layout" name="layout">
+                        [% FOREACH l IN layouts %]
+                            <option value="[% l.id %]">[% l.name %]</option>
+                        [% END %]
+                    </select>
+                </li>
+
+                <li>
+                    <label for="printer_profile">Printer profile: </label>
+                    <select id="printer_profile" name="printer_profile">
+                        <option value=""></option>
+                        [% FOREACH p IN printer_profiles %]
+                            <option value="[% p.id %]">[% p.name %]</option>
+                        [% END %]
+                    </select>
+                </li>
+
+                <li>
+                    <label for="starting_label">Starting label: </label>
+                    <input type="number" min="1" step="1" id="starting_label" name="starting_label" value="1">
+                </li>
+            </ol>
+        </fieldset>
+
+        <fieldset class="action">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-print"></i> Print labels
+            </button>
+            <a href="?class=[% CLASS %]&method=[% METHOD %]">Cancel</a>
+        </fieldset>
+    </form>
+[% INCLUDE 'intranet-bottom.inc' %]

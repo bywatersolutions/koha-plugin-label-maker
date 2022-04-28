@@ -32,6 +32,9 @@
         <a class="btn btn-default" href="?class=[% CLASS %]&method=[% METHOD %]&action=print">
             <i class="fa fa-print"></i> Print batch
         </a>
+        <a class="btn btn-default" href="?class=[% CLASS %]&method=[% METHOD %]&action=quickprint">
+            <i class="fa fa-print"></i> Quick spine label
+        </a>
     </div>
 
     <div id="tabs">

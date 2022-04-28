@@ -67,6 +67,28 @@ sub tool {
             $self->print_labels_form();
         }
     }
+    elsif ( $action eq 'quickprint') {
+        my $barcode         = $cgi->param('barcode');
+        my $template        = $cgi->param('template');
+        my $layout          = $cgi->param('layout');
+        my $printer_profile = $cgi->param('printer_profile');
+        my $starting_label  = $cgi->param('starting_label');
+
+        if ( $template && $layout ) {
+            $self->print_quicklabels(
+                {
+                    barcode         => $barcode,
+                    template        => $template,
+                    layout          => $layout,
+                    printer_profile => $printer_profile,
+                    starting_label  => $starting_label,
+                }
+            );
+        }
+        else {
+            $self->print_quicklabels_form();
+        }
+    }
     elsif ( $action eq 'edit' ) {
         my $type = $cgi->param('type');
         my $id   = $cgi->param('id');
@@ -251,6 +273,35 @@ sub print_labels_form {
     $self->output_html( $template->output() );
 }
 
+sub print_quicklabels_form {
+    my ( $self, $args ) = @_;
+
+    my $dbh = C4::Context->dbh;
+
+    my $templates =
+      $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_templates',
+        { Slice => {} } );
+
+    my $layouts =
+      $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_layouts',
+        { Slice => {} } );
+
+    my $printer_profiles =
+      $dbh->selectall_arrayref(
+        'SELECT * FROM plugin_label_maker_printer_profiles',
+        { Slice => {} } );
+
+    my $template = $self->get_template( { file => 'print_quicklabels_form.tt' } );
+
+    $template->param(
+        templates        => $templates,
+        layouts          => $layouts,
+        printer_profiles => $printer_profiles,
+    );
+
+    $self->output_html( $template->output() );
+}
+
 sub print_labels {
     my ( $self, $args ) = @_;
     my $batch_id           = $args->{batch};
@@ -296,6 +347,43 @@ sub print_labels {
     $self->output_html( $page_template->output() );
 }
 
+sub print_quicklabels {
+    my ( $self, $args ) = @_;
+    my $this_barcode       = $args->{barcode};
+    my $template_id        = $args->{template};
+    my $layout_id          = $args->{layout};
+    my $printer_profile_id = $args->{printer_profile};
+    my $starting_label     = $args->{starting_label} || 1;
+
+    my $dbh = C4::Context->dbh;
+
+    #remove leading whitespaces
+    $this_barcode  =~ s/^\s+//;
+    my $barcode = $dbh->selectrow_hashref(
+        "SELECT * from items where barcode = ?",
+        undef, $this_barcode );
+    my $template = $dbh->selectrow_hashref(
+        "SELECT * FROM plugin_label_maker_templates WHERE id = ?",
+        undef, $template_id );
+    my $layout = $dbh->selectrow_hashref(
+        "SELECT * FROM plugin_label_maker_layouts WHERE id = ?",
+        undef, $layout_id );
+    my $printer_profile = $dbh->selectrow_hashref(
+        "SELECT * FROM plugin_label_maker_printer_profiles WHERE id = ?",
+        undef, $printer_profile_id );
+
+    my $item = Koha::Items->find( $barcode->{itemnumber} );
+    my $page_template = $self->get_template( { file => 'print_labels.tt' } );
+
+    $page_template->param(
+        items                  => $item,
+        labels_template        => $template,
+        labels_layout          => $layout,
+        labels_printer_profile => $printer_profile,
+    );
+
+    $self->output_html( $page_template->output() );
+}
 =head2
 
     This method below attaches to any Koha::Item objects,
