@@ -457,7 +457,7 @@ sub install() {
     my $dbh = C4::Context->dbh;
 
     $dbh->do(q{
-        CREATE TABLE plugin_label_maker_templates (
+        CREATE TABLE IF NOT EXISTS plugin_label_maker_templates (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         content TEXT
@@ -465,7 +465,7 @@ sub install() {
     });
 
     $dbh->do(q{
-        CREATE TABLE plugin_label_maker_layouts (
+        CREATE TABLE IF NOT EXISTS plugin_label_maker_layouts (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         content TEXT
@@ -473,7 +473,7 @@ sub install() {
     });
 
     $dbh->do(q{
-        CREATE TABLE plugin_label_maker_printer_profiles (
+        CREATE TABLE IF NOT EXISTS plugin_label_maker_printer_profiles (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         content TEXT
@@ -481,7 +481,7 @@ sub install() {
     });
 
     $dbh->do(q|
-        INSERT INTO `plugin_label_maker_layouts` (`id`, `name`, `content`) VALUES
+        INSERT IGNORE INTO `plugin_label_maker_layouts` (`id`, `name`, `content`) VALUES
 
 (1,'Avery 5630','html, body, div, span, h1 {
   margin: 0;
@@ -580,7 +580,7 @@ body {
 }
 
 .right-label {
-  width: 3in; 
+  width: 3in;
   height: 1in;
 
   float: left;
@@ -592,7 +592,7 @@ body {
     |);
 
     $dbh->do(q|
-        INSERT INTO `plugin_label_maker_templates` (`id`, `name`, `content`) VALUES
+        INSERT IGNORE INTO `plugin_label_maker_templates` (`id`, `name`, `content`) VALUES
 (1,'Avery Standard Labels','[% FOREACH item IN items %]
     [% IF loop.index % 30 == 0 %]
         [% SET label_index = 1 %]
