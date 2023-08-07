@@ -67,6 +67,32 @@ sub tool {
             $self->print_labels_form();
         }
     }
+    elsif ( $action eq 'print_single') {
+        my $itemnumber      = $cgi->param('itemnumber');
+        my $barcode         = $cgi->param('barcode');
+        my $quantity        = $cgi->param('quantity');
+        my $template        = $cgi->param('template');
+        my $layout          = $cgi->param('layout');
+        my $printer_profile = $cgi->param('printer_profile');
+        my $starting_label  = $cgi->param('starting_label');
+
+        if ( $template && $layout ) {
+            $self->print_labels(
+                {
+                    itemnumber      => $itemnumber,
+                    barcode         => $barcode,
+                    quantity        => $quantity,
+                    template        => $template,
+                    layout          => $layout,
+                    printer_profile => $printer_profile,
+                    starting_label  => $starting_label,
+                }
+            );
+        }
+        else {
+            $self->print_labels_form();
+        }
+    }
     elsif ( $action eq 'quickprint') {
         my $barcode         = $cgi->param('barcode');
         my $template        = $cgi->param('template');
@@ -309,13 +335,18 @@ sub print_labels {
     my $layout_id          = $args->{layout};
     my $printer_profile_id = $args->{printer_profile};
     my $starting_label     = $args->{starting_label} || 1;
+    my $itemnumber         = $args->{itemnumber};
+    my $barcode            = $args->{barcode};
+    my $quantity           = $args->{quantity} || 1;
 
     my $dbh = C4::Context->dbh;
 
     my $batch =
-      $dbh->selectall_arrayref(
+      $batch_id
+      ? $dbh->selectall_arrayref(
         'SELECT * FROM creator_batches WHERE batch_id = ?',
-        { Slice => {} }, $batch_id );
+        { Slice => {} }, $batch_id )
+      : undef;
 
     my $template = $dbh->selectrow_hashref(
         "SELECT * FROM plugin_label_maker_templates WHERE id = ?",
@@ -330,9 +361,18 @@ sub print_labels {
     my @items;
 
     push( @items, undef ) for ( 1 .. $starting_label - 1 );
-    foreach my $b (@$batch) {
-        my $item = Koha::Items->find( $b->{item_number} );
-        push( @items, $item );
+
+    if ( $batch ) {
+        foreach my $b (@$batch) {
+            my $item = Koha::Items->find( $b->{item_number} );
+            push( @items, $item );
+        }
+    } elsif ( $itemnumber ) {
+            my $item = Koha::Items->find( $itemnumber );
+            push( @items, $item ) for 1..$quantity;
+    } elsif ( $barcode ) {
+            my $item = Koha::Items->find( { barcode => $barcode } );
+            push( @items, $item ) for 1..$quantity;
     }
 
     my $page_template = $self->get_template( { file => 'print_labels.tt' } );
