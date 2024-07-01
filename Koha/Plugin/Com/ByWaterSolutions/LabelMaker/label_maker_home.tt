@@ -35,6 +35,9 @@
         <a class="btn btn-default" href="?class=[% CLASS %]&method=[% METHOD %]&action=quickprint">
             <i class="fa fa-print"></i> Quick spine label
         </a>
+        <a class="btn btn-default" href="?class=[% CLASS %]&method=[% METHOD %]&action=patronprint">
+            <i class="fa fa-print"></i> Print patron batch
+        </a>
     </div>
 
     <div id="tabs" class="toptabs">

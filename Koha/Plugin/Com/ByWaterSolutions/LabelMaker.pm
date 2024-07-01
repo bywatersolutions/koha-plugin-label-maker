@@ -67,6 +67,28 @@ sub tool {
             $self->print_labels_form();
         }
     }
+    elsif ( $action eq 'patronprint' ) {
+        my $batch           = $cgi->param('patronbatch');
+        my $template        = $cgi->param('template');
+        my $layout          = $cgi->param('layout');
+        my $printer_profile = $cgi->param('printer_profile');
+        my $starting_label  = $cgi->param('starting_label');
+
+        if ( $batch && $template && $layout ) {
+            $self->print_patron_labels(
+                {
+                    batch           => $batch,
+                    template        => $template,
+                    layout          => $layout,
+                    printer_profile => $printer_profile,
+                    starting_label  => $starting_label,
+                }
+            );
+        }
+        else {
+            $self->print_patron_labels_form();
+        }
+    }
     elsif ( $action eq 'print_single') {
         my $itemnumber      = $cgi->param('itemnumber');
         my $barcode         = $cgi->param('barcode');
@@ -299,6 +321,40 @@ sub print_labels_form {
     $self->output_html( $template->output() );
 }
 
+sub print_patron_labels_form {
+    my ( $self, $args ) = @_;
+
+    my $dbh = C4::Context->dbh;
+
+    my $templates =
+        $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_templates',
+        { Slice => {} } );
+
+    my $layouts =
+        $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_layouts',
+        { Slice => {} } );
+
+    my $printer_profiles =
+        $dbh->selectall_arrayref(
+        'SELECT * FROM plugin_label_maker_printer_profiles',
+        { Slice => {} } );
+
+    my $patron_batches =
+        $dbh->selectall_arrayref(
+        'SELECT patron_list_id, COUNT(patron_list_id) as patrons_count FROM patron_list_patrons GROUP BY patron_list_id ORDER BY patron_list_id DESC',
+        { Slice => {} } );
+
+    my $template = $self->get_template( { file => 'print_patron_labels_form.tt' } );
+    $template->param(
+        templates        => $templates,
+        layouts          => $layouts,
+        printer_profiles => $printer_profiles,
+        batches          => $patron_batches,
+    );
+
+    $self->output_html( $template->output() );
+}
+
 sub print_quicklabels_form {
     my ( $self, $args ) = @_;
 
@@ -379,6 +435,55 @@ sub print_labels {
 
     $page_template->param(
         items                  => \@items,
+        labels_template        => $template,
+        labels_layout          => $layout,
+        labels_printer_profile => $printer_profile,
+    );
+
+    $self->output_html( $page_template->output() );
+}
+
+sub print_patron_labels {
+    my ( $self, $args ) = @_;
+    my $patronlist_id      = $args->{batch};
+    my $template_id        = $args->{template};
+    my $layout_id          = $args->{layout};
+    my $printer_profile_id = $args->{printer_profile};
+    my $starting_label     = $args->{starting_label} || 1;
+    my $barcode            = $args->{barcode};
+    my $quantity           = $args->{quantity} || 1;
+    my $dbh = C4::Context->dbh;
+
+    my $patronlist =
+        $patronlist_id
+        ? $dbh->selectall_arrayref(
+        'SELECT * FROM patron_list_patrons WHERE patron_list_id = ?',
+        { Slice => {} }, $patronlist_id )
+        : undef;
+    my $template = $dbh->selectrow_hashref(
+        "SELECT * FROM plugin_label_maker_templates WHERE id = ?",
+        undef, $template_id );
+    my $layout = $dbh->selectrow_hashref(
+        "SELECT * FROM plugin_label_maker_layouts WHERE id = ?",
+        undef, $layout_id );
+    my $printer_profile = $dbh->selectrow_hashref(
+        "SELECT * FROM plugin_label_maker_printer_profiles WHERE id = ?",
+        undef, $printer_profile_id );
+
+    my @patrons;
+
+    push( @patrons, undef ) for ( 1 .. $starting_label - 1 );
+
+    my $page_template = $self->get_template( { file => 'print_patron_labels.tt' } );
+
+    if ( $patronlist ) {
+        foreach my $pl (@$patronlist) {
+            my $patron = Koha::Patrons->find( $pl->{borrowernumber} );
+            push( @patrons, $patron );
+        }
+    }
+    $page_template->param(
+        patrons                => \@patrons,
         labels_template        => $template,
         labels_layout          => $layout,
         labels_printer_profile => $printer_profile,
