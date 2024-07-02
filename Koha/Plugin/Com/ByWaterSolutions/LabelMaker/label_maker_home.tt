@@ -14,7 +14,8 @@
         <div class="btn-group">
             <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> New <span class="caret"></span></button>
             <ul class="dropdown-menu">
-                <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=templates&id=[% l.id %]">Template</a></li>
+                <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=templates&id=[% l.id %]">Item template</a></li>
+                <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=patron_templates&id=[% l.id %]">Patron template</a></li>
                 <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=layouts&id=[% l.id %]">Layout</a></li>
                 <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=printer_profiles&id=[% l.id %]">Printer profile</a></li>
                 <li><a target="_blank" href="/cgi-bin/koha/labels/label-edit-batch.pl?op=new">Label batch</a></li>
@@ -132,19 +133,19 @@
 
                                         <ul class="dropdown-menu" role="menu">
                                             <li>
-                                                <a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=templates&id=[% t.id %]">
+                                                <a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=patron_templates&id=[% t.id %]">
                                                     <i class="fa fa-edit"></i> Edit
                                                 </a>
                                             </li>
 
                                             <li>
-                                                <a href="?class=[% CLASS %]&method=[% METHOD %]&action=copy&type=templates&id=[% t.id %]">
+                                                <a href="?class=[% CLASS %]&method=[% METHOD %]&action=copy&type=patron_templates&id=[% t.id %]">
                                                     <i class="fa fa-copy"></i> Copy
                                                 </a>
                                             </li>
 
                                             <li>
-                                                <a href="?class=[% CLASS %]&method=[% METHOD %]&action=delete&type=templates&id=[% t.id %]" onclick="return confirm('Are you sure?')">
+                                                <a href="?class=[% CLASS %]&method=[% METHOD %]&action=delete&type=patron_templates&id=[% t.id %]" onclick="return confirm('Are you sure?')">
                                                     <i class="fa fa-trash"></i> Delete
                                                 </a>
                                             </li>
