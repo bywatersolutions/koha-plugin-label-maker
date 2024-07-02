@@ -602,6 +602,47 @@ sub wizard_store {
     $self->label_maker_home();
 }
 
+sub upgrade {
+    my ( $self, $args ) = @_;
+
+    my $dbh = C4::Context->dbh;
+
+    $dbh->do(q{
+        CREATE TABLE IF NOT EXISTS plugin_label_maker_templates (
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        content TEXT
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    });
+
+    $dbh->do(q{
+        CREATE TABLE IF NOT EXISTS plugin_label_maker_patron_templates (
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        content TEXT
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    });
+
+    $dbh->do(q{
+        CREATE TABLE IF NOT EXISTS plugin_label_maker_layouts (
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        content TEXT
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    });
+
+    $dbh->do(q{
+        CREATE TABLE IF NOT EXISTS plugin_label_maker_printer_profiles (
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        content TEXT
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    });
+
+
+    return 1;
+}
+
 sub install() {
     my ( $self, $args ) = @_;
 
