@@ -31,7 +31,7 @@
                 <li>
                     <label for="template">Template: </label>
                     <select id="template" name="template">
-                        [% FOREACH t IN templates %]
+                        [% FOREACH t IN patrontemplates %]
                             <option value="[% t.id %]">[% t.name %]</option>
                         [% END %]
                     </select>

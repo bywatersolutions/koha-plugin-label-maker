@@ -186,6 +186,7 @@ sub uninstall() {
     my $dbh = C4::Context->dbh;
 
     $dbh->do("DROP TABLE plugin_label_maker_templates");
+    $dbh->do("DROP TABLE plugin_label_maker_patron_templates");
     $dbh->do("DROP TABLE plugin_label_maker_layouts");
     $dbh->do("DROP TABLE plugin_label_maker_printer_profiles");
 
@@ -204,6 +205,10 @@ sub label_maker_home {
       $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_templates',
         { Slice => {} } );
 
+    my $patron_templates =
+      $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_patron_templates',
+        { Slice => {} } );
+
     my $layouts =
       $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_layouts',
         { Slice => {} } );
@@ -218,6 +223,7 @@ sub label_maker_home {
     $template->param(
         tab              => $tab,
         templates        => $templates,
+        patrontemplates  => $patron_templates,
         layouts          => $layouts,
         printer_profiles => $printer_profiles,
     );
@@ -326,8 +332,8 @@ sub print_patron_labels_form {
 
     my $dbh = C4::Context->dbh;
 
-    my $templates =
-        $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_templates',
+    my $patron_templates =
+        $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_patron_templates',
         { Slice => {} } );
 
     my $layouts =
@@ -346,7 +352,7 @@ sub print_patron_labels_form {
 
     my $template = $self->get_template( { file => 'print_patron_labels_form.tt' } );
     $template->param(
-        templates        => $templates,
+        patrontemplates  => $patron_templates,
         layouts          => $layouts,
         printer_profiles => $printer_profiles,
         batches          => $patron_batches,
@@ -461,7 +467,7 @@ sub print_patron_labels {
         { Slice => {} }, $patronlist_id )
         : undef;
     my $template = $dbh->selectrow_hashref(
-        "SELECT * FROM plugin_label_maker_templates WHERE id = ?",
+        "SELECT * FROM plugin_label_maker_patron_templates WHERE id = ?",
         undef, $template_id );
     my $layout = $dbh->selectrow_hashref(
         "SELECT * FROM plugin_label_maker_layouts WHERE id = ?",
@@ -603,6 +609,14 @@ sub install() {
 
     $dbh->do(q{
         CREATE TABLE IF NOT EXISTS plugin_label_maker_templates (
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        content TEXT
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    });
+
+    $dbh->do(q{
+        CREATE TABLE IF NOT EXISTS plugin_label_maker_patron_templates (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         content TEXT
@@ -800,6 +814,34 @@ body {
 [% END %]');
     |);
 
+    $dbh->do(q|
+        INSERT IGNORE INTO `plugin_label_maker_patron_templates` (`id`, `name`, `content`) VALUES
+(1,'Avery Standard Labels','[% FOREACH patron IN patrons %]
+    [% IF loop.index % 30 == 0 %]
+        [% SET label_index = 1 %]
+        [% UNLESS loop.first %]
+            </span>
+        [% END %]
+        <span class="page">
+    [% END %]
+
+    <div class="label label[% label_index %]">
+        [% patron.firstname %] [% patron.surname %]
+
+        <br/>
+
+        [% IF patron.cardnumber %]
+            <img src="/cgi-bin/koha/svc/barcode?barcode=[% patron.cardnumber %]&type=Matrix2of5" />
+        [% END %]
+
+        <br/>
+
+        [% patron.cardnumber %]
+    </div>
+    [% IF loop.last %]</span>[% END %]
+    [% SET label_index = label_index + 1 %]
+[% END %]');
+    |);
     return 1;
 }
 

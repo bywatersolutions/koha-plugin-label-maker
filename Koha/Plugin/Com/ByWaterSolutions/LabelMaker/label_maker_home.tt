@@ -43,7 +43,10 @@
     <div id="tabs" class="toptabs">
       <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active">
-            <a href="#templates-content" aria-controls="templates-content" role="tab" data-toggle="tab">Templates</a>
+            <a href="#templates-content" aria-controls="templates-content" role="tab" data-toggle="tab">Item templates</a>
+        </li>
+        <li role="presentation">
+            <a href="#patron-templates-content" aria-controls="patron-templates-content" role="tab" data-toggle="tab">Patron templates</a>
         </li>
         <li role="presentation">
             <a href="#layouts-content" aria-controls="layouts-content" role="tab" data-toggle="tab">Layouts</a>
@@ -105,6 +108,57 @@
             </table>
           </div>
 
+          <div id="patron-templates-content" class="tab-pane" role="tabpanel">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Content</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    [% IF patrontemplates %]
+                        [% FOREACH t IN patrontemplates %]
+                            <tr>
+                                <td>[% t.name %]</td>
+                                <td><pre>[% t.content | html %]</pre></td>
+                                <td>
+                                    <div class="dropdown">
+                                        <a class="btn btn-default dropdown-toggle" role="button" data-toggle="dropdown" href="#">
+                                            <i class="fa fa-plus"></i> Actions <b class="caret"></b>
+                                        </a>
+
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li>
+                                                <a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=templates&id=[% t.id %]">
+                                                    <i class="fa fa-edit"></i> Edit
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="?class=[% CLASS %]&method=[% METHOD %]&action=copy&type=templates&id=[% t.id %]">
+                                                    <i class="fa fa-copy"></i> Copy
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="?class=[% CLASS %]&method=[% METHOD %]&action=delete&type=templates&id=[% t.id %]" onclick="return confirm('Are you sure?')">
+                                                    <i class="fa fa-trash"></i> Delete
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        [% END %]
+                    [% ELSE %]
+                        <tr><td colspan="99">No templates exist</td></tr>
+                    [% END %]
+                </tbody>
+            </table>
+          </div>
           <div id="layouts-content" class="tab-pane" role="tabpanel">
 
             <table class="table table-bordered table-striped">
