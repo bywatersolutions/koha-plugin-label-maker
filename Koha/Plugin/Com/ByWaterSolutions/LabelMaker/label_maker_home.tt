@@ -1,3 +1,4 @@
+[% USE raw %]
 [% INCLUDE 'doc-head-open.inc' %]
  <title>Koha: Label Maker Plugin</title>
  [% INCLUDE 'doc-head-close.inc' %]
@@ -7,26 +8,41 @@
 [% INCLUDE 'header.inc' %]
 [% INCLUDE 'cat-search.inc' %]
 
-<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo; <a href="?class=[% CLASS %]&method=[% METHOD %]">Label Maker</a> &rsaquo; Home</div>
+[% WRAPPER 'sub-header.inc' %]
+    [% WRAPPER breadcrumbs %]
+        [% IF blocking_error %]
+            [% WRAPPER breadcrumb_item bc_active= 1 %]
+                <span>Plugins</span>
+            [% END %]
+        [% ELSE %]
+            [% WRAPPER breadcrumb_item %]
+                <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a>
+            [% END %]
+            [% WRAPPER breadcrumb_item bc_active= 1 %]
+                <span>Label maker</span>
+            [% END %]
+        [% END %]
+    [% END #/ WRAPPER breadcrumbs %]
+[% END #/ WRAPPER sub-header.inc %]
 
 <div id="doc3">
     <div id="toolbar" class="btn-toolbar">
         <div class="btn-group">
-            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> New <span class="caret"></span></button>
+            <button class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-plus"></i> New <span class="caret"></span></button>
             <ul class="dropdown-menu">
-                <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=templates&id=[% l.id %]">Item template</a></li>
-                <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=patron_templates&id=[% l.id %]">Patron template</a></li>
-                <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=layouts&id=[% l.id %]">Layout</a></li>
-                <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=printer_profiles&id=[% l.id %]">Printer profile</a></li>
-                <li><a target="_blank" href="/cgi-bin/koha/labels/label-edit-batch.pl?op=new">Label batch</a></li>
+                <li><a class="dropdown-item" href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=templates&id=[% l.id %]">Item template</a></li>
+                <li><a class="dropdown-item" href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=patron_templates&id=[% l.id %]">Patron template</a></li>
+                <li><a class="dropdown-item" href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=layouts&id=[% l.id %]">Layout</a></li>
+                <li><a class="dropdown-item" href="?class=[% CLASS %]&method=[% METHOD %]&action=edit&type=printer_profiles&id=[% l.id %]">Printer profile</a></li>
+                <li><a class="dropdown-item" target="_blank" href="/cgi-bin/koha/labels/label-edit-batch.pl?op=new">Label batch</a></li>
             </ul>
         </div>
 
         <div class="btn-group">
-            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-magic"></i> New from wizard <span class="caret"></span></button>
+            <button class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-magic"></i> New from wizard <span class="caret"></span></button>
             <ul class="dropdown-menu">
-                <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=wizard&type=templates&id=[% l.id %]">Template</a></li>
-                <li><a href="?class=[% CLASS %]&method=[% METHOD %]&action=wizard&type=layouts&id=[% l.id %]">Layout</a></li>
+                <li><a class="dropdown-item" href="?class=[% CLASS %]&method=[% METHOD %]&action=wizard&type=templates&id=[% l.id %]">Template</a></li>
+                <li><a class="dropdown-item" href="?class=[% CLASS %]&method=[% METHOD %]&action=wizard&type=layouts&id=[% l.id %]">Layout</a></li>
             </ul>
         </div>
 
@@ -43,17 +59,17 @@
 
     <div id="tabs" class="toptabs">
       <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active">
-            <a href="#templates-content" aria-controls="templates-content" role="tab" data-toggle="tab">Item templates</a>
+        <li class="nav-item" role="presentation" class="active">
+            <a class="nav-link active" href="#templates-content" aria-controls="templates-content" role="tab" data-bs-toggle="tab">Item templates</a>
         </li>
-        <li role="presentation">
-            <a href="#patron-templates-content" aria-controls="patron-templates-content" role="tab" data-toggle="tab">Patron templates</a>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="#patron-templates-content" aria-controls="patron-templates-content" role="tab" data-bs-toggle="tab">Patron templates</a>
         </li>
-        <li role="presentation">
-            <a href="#layouts-content" aria-controls="layouts-content" role="tab" data-toggle="tab">Layouts</a>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="#layouts-content" aria-controls="layouts-content" role="tab" data-bs-toggle="tab">Layouts</a>
         </li>
-        <li role="presentation">
-            <a href="#printer_profiles-content" aria-controls="printer_profiles-content" role="tab" data-toggle="tab">Printer profiles</a>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="#printer_profiles-content" aria-controls="printer_profiles-content" role="tab" data-bs-toggle="tab">Printer profiles</a>
         </li>
       </ul>
       <div class="tab-content">
@@ -75,7 +91,7 @@
                                 <td><pre>[% t.content | html %]</pre></td>
                                 <td>
                                     <div class="dropdown">
-                                        <a class="btn btn-default dropdown-toggle" role="button" data-toggle="dropdown" href="#">
+                                        <a class="btn btn-default dropdown-toggle" role="button" data-bs-toggle="dropdown" href="#">
                                             <i class="fa fa-plus"></i> Actions <b class="caret"></b>
                                         </a>
 
@@ -127,7 +143,7 @@
                                 <td><pre>[% t.content | html %]</pre></td>
                                 <td>
                                     <div class="dropdown">
-                                        <a class="btn btn-default dropdown-toggle" role="button" data-toggle="dropdown" href="#">
+                                        <a class="btn btn-default dropdown-toggle" role="button" data-bs-toggle="dropdown" href="#">
                                             <i class="fa fa-plus"></i> Actions <b class="caret"></b>
                                         </a>
 
@@ -179,7 +195,7 @@
                                 <td><pre>[% l.content %]</pre></td>
                                 <td>
                                     <div class="dropdown">
-                                        <a class="btn btn-default dropdown-toggle" role="button" data-toggle="dropdown" href="#">
+                                        <a class="btn btn-default dropdown-toggle" role="button" data-bs-toggle="dropdown" href="#">
                                             <i class="fa fa-plus"></i> Actions <b class="caret"></b>
                                         </a>
 
