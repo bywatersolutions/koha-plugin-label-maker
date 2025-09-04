@@ -20,8 +20,8 @@ our $metadata = {
     name            => 'Label Maker',
     author          => 'Kyle M Hall',
     date_authored   => '2018-06-07',
-    date_updated    => "1900-01-01",
-    minimum_version => '17.05.00.000',
+    date_updated    => "2025-09-03",
+    minimum_version => '24.11.00.000',
     maximum_version => undef,
     version         => $VERSION,
     description     => 'An alternative label creator for Koha powered by HTML and CSS'
@@ -139,11 +139,23 @@ sub tool {
     }
     elsif ( $action eq 'edit' ) {
         my $type = $cgi->param('type');
+	my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
+
+        unless (defined($type) && $valid_types{$type}) {
+            warn "Invalid type parameter used: " . $type;
+            return;
+        }
         my $id   = $cgi->param('id');
         $self->edit( { type => $type, id => $id } );
     }
     elsif ( $action eq 'copy' ) {
         my $type = $cgi->param('type');
+	my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
+
+        unless (defined($type) && $valid_types{$type}) {
+            warn "Invalid type parameter used: " . $type;
+            return;
+        }
         my $id   = $cgi->param('id');
         $self->edit( { type => $type, id => $id, copy => 1 } );
     }
@@ -163,11 +175,23 @@ sub tool {
     }
     elsif ( $action eq 'delete' ) {
         my $type = $cgi->param('type');
+	my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
+
+        unless (defined($type) && $valid_types{$type}) {
+            warn "Invalid type parameter used: " . $type;
+            return;
+        }
         my $id   = $cgi->param('id');
         $self->delete( { type => $type, id => $id } );
     }
     elsif ( $action eq 'wizard' ) {
         my $type = $cgi->param('type');
+	my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
+
+        unless (defined($type) && $valid_types{$type}) {
+            warn "Invalid type parameter used: " . $type;
+            return;
+        }
         $self->wizard( { type => $type } );
     }
     elsif ( $action eq 'wizard_store' ) {
@@ -237,6 +261,12 @@ sub edit {
     my $id   = $args->{id};
     my $copy = $args->{copy};
 
+    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
+
+    unless (defined($type) && $valid_types{$type}) {
+        warn "Invalid type parameter used: " . $type;
+        return;
+    }
     my $dbh = C4::Context->dbh;
 
     my $table = "plugin_label_maker_$type";
@@ -261,6 +291,12 @@ sub store {
     my $name    = $args->{name};
     my $content = $args->{content};
 
+    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
+
+    unless (defined($type) && $valid_types{$type}) {
+        warn "Invalid type parameter used: " . $type;
+        return;
+    }
     my $dbh = C4::Context->dbh;
 
     my $table = "plugin_label_maker_$type";
@@ -282,6 +318,12 @@ sub delete {
     my $type    = $args->{type};
     my $id      = $args->{id};
 
+    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
+
+    unless (defined($type) && $valid_types{$type}) {
+        warn "Invalid type parameter used: " . $type;
+        return;
+    }
     my $dbh = C4::Context->dbh;
 
     my $table = "plugin_label_maker_$type";
@@ -559,6 +601,12 @@ sub wizard {
     my ( $self, $args ) = @_;
     my $type = $args->{type};
 
+    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
+
+    unless (defined($type) && $valid_types{$type}) {
+        warn "Invalid type parameter used: " . $type;
+        return;
+    }
     my $filename = qq{wizard_$type.tt};
 
     my @item_columns = Koha::Items->columns();
@@ -581,6 +629,12 @@ sub wizard {
 sub wizard_store {
     my ( $self, $args ) = @_;
     my $type = $args->{type};
+    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
+
+    unless (defined($type) && $valid_types{$type}) {
+        warn "Invalid type parameter used: " . $type;
+        return;
+    }
     my $name = $args->{name};
     my $cgi  = $args->{cgi};
 
