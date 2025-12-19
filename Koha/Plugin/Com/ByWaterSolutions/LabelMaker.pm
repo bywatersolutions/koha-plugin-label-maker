@@ -139,8 +139,8 @@ sub tool {
     }
     elsif ( $action eq 'edit' ) {
         my $type = $cgi->param('type');
-	my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
-
+	my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
+        warn Data::Dumper::Dumper( $type );
         unless (defined($type) && $valid_types{$type}) {
             warn "Invalid type parameter used: " . $type;
             return;
@@ -150,7 +150,7 @@ sub tool {
     }
     elsif ( $action eq 'copy' ) {
         my $type = $cgi->param('type');
-	my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
+	my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
 
         unless (defined($type) && $valid_types{$type}) {
             warn "Invalid type parameter used: " . $type;
@@ -175,7 +175,7 @@ sub tool {
     }
     elsif ( $action eq 'delete' ) {
         my $type = $cgi->param('type');
-	my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
+	my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
 
         unless (defined($type) && $valid_types{$type}) {
             warn "Invalid type parameter used: " . $type;
@@ -186,7 +186,7 @@ sub tool {
     }
     elsif ( $action eq 'wizard' ) {
         my $type = $cgi->param('type');
-	my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
+	my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
 
         unless (defined($type) && $valid_types{$type}) {
             warn "Invalid type parameter used: " . $type;
@@ -261,7 +261,7 @@ sub edit {
     my $id   = $args->{id};
     my $copy = $args->{copy};
 
-    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
+    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
 
     unless (defined($type) && $valid_types{$type}) {
         warn "Invalid type parameter used: " . $type;
@@ -291,7 +291,7 @@ sub store {
     my $name    = $args->{name};
     my $content = $args->{content};
 
-    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
+    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
 
     unless (defined($type) && $valid_types{$type}) {
         warn "Invalid type parameter used: " . $type;
@@ -318,7 +318,7 @@ sub delete {
     my $type    = $args->{type};
     my $id      = $args->{id};
 
-    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
+    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
 
     unless (defined($type) && $valid_types{$type}) {
         warn "Invalid type parameter used: " . $type;
@@ -601,7 +601,7 @@ sub wizard {
     my ( $self, $args ) = @_;
     my $type = $args->{type};
 
-    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
+    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
 
     unless (defined($type) && $valid_types{$type}) {
         warn "Invalid type parameter used: " . $type;
@@ -629,7 +629,7 @@ sub wizard {
 sub wizard_store {
     my ( $self, $args ) = @_;
     my $type = $args->{type};
-    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts);
+    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
 
     unless (defined($type) && $valid_types{$type}) {
         warn "Invalid type parameter used: " . $type;
