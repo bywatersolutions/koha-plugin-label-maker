@@ -292,11 +292,14 @@
                 case 'templates':
                     index = 0;
                     break;
-                case 'layouts':
+                case 'patron_templates':
                     index = 1;
                     break;
-                case 'printer_profiles':
+                case 'layouts':
                     index = 2;
+                    break;
+                case 'printer_profiles':
+                    index = 3;
                     break;
                 default:
                     index = 0;
