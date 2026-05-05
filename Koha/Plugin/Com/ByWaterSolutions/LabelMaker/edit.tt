@@ -40,7 +40,7 @@
                 </li>
                 <li>
                     <label for="content">Content: </label>
-                    <textarea id="content" name="content" cols="100" rows="30">[% data.content %]</textarea>
+                    <textarea id="content" name="content" cols="100" rows="30">[% data.content | html %]</textarea>
                 </li>
             </ol>
         </fieldset>
