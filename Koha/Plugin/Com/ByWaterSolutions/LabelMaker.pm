@@ -12,6 +12,13 @@ use Koha::Items;
 use Koha::Biblios;
 use Koha::Biblioitems;
 
+# Upper bounds for the numbers a user can send us. Without them, a barcode
+# scanned into the starting label field builds a list of trillions of elements
+# and uses up all the memory on the server.
+use constant MAX_STARTING_LABEL => 100;
+use constant MAX_QUANTITY       => 100;
+use constant MAX_BATCH_SIZE     => 5000;
+
 ## Here we set our plugin version
 our $VERSION = "{VERSION}";
 
@@ -354,16 +361,19 @@ sub print_labels_form {
 
     my $batches =
       $dbh->selectall_arrayref(
-        'SELECT batch_id, COUNT(batch_id) AS items_count, branch_code FROM creator_batches WHERE creator = "Labels" GROUP BY batch_id ORDER BY timestamp DESC',
+        'SELECT batch_id, COUNT(batch_id) AS items_count, branch_code, MAX(timestamp) AS timestamp FROM creator_batches WHERE creator = "Labels" GROUP BY batch_id, branch_code ORDER BY timestamp DESC',
         { Slice => {} } );
 
     my $template = $self->get_template( { file => 'print_labels_form.tt' } );
 
     $template->param(
-        templates        => $templates,
-        layouts          => $layouts,
-        printer_profiles => $printer_profiles,
-        batches          => $batches,
+        templates          => $templates,
+        layouts            => $layouts,
+        printer_profiles   => $printer_profiles,
+        batches            => $batches,
+        error              => $args->{error},
+        max_starting_label => MAX_STARTING_LABEL,
+        max_batch_size     => MAX_BATCH_SIZE,
     );
 
     $self->output_html( $template->output() );
@@ -394,10 +404,13 @@ sub print_patron_labels_form {
 
     my $template = $self->get_template( { file => 'print_patron_labels_form.tt' } );
     $template->param(
-        patrontemplates  => $patron_templates,
-        layouts          => $layouts,
-        printer_profiles => $printer_profiles,
-        batches          => $patron_batches,
+        patrontemplates    => $patron_templates,
+        layouts            => $layouts,
+        printer_profiles   => $printer_profiles,
+        batches            => $patron_batches,
+        error              => $args->{error},
+        max_starting_label => MAX_STARTING_LABEL,
+        max_batch_size     => MAX_BATCH_SIZE,
     );
 
     $self->output_html( $template->output() );
@@ -424,12 +437,33 @@ sub print_quicklabels_form {
     my $template = $self->get_template( { file => 'print_quicklabels_form.tt' } );
 
     $template->param(
-        templates        => $templates,
-        layouts          => $layouts,
-        printer_profiles => $printer_profiles,
+        templates          => $templates,
+        layouts            => $layouts,
+        printer_profiles   => $printer_profiles,
+        max_starting_label => MAX_STARTING_LABEL,
     );
 
     $self->output_html( $template->output() );
+}
+
+=head3 validate_number
+
+    my $error = validate_number( 'Starting label', $value, MAX_STARTING_LABEL );
+
+Returns an error message unless the value is a whole number from 1 to the maximum.
+An empty value is allowed, the callers default those to 1.
+
+=cut
+
+sub validate_number {
+    my ( $name, $value, $max ) = @_;
+
+    return unless defined $value && $value ne q{};
+
+    return "$name must be a whole number from 1 to $max."
+        unless $value =~ /^\d+$/ && $value >= 1 && $value <= $max;
+
+    return;
 }
 
 sub print_labels {
@@ -443,14 +477,32 @@ sub print_labels {
     my $barcode            = $args->{barcode};
     my $quantity           = $args->{quantity} || 1;
 
+    my $error =
+         validate_number( 'Starting label', $args->{starting_label}, MAX_STARTING_LABEL )
+      || validate_number( 'Quantity',       $args->{quantity},       MAX_QUANTITY );
+    return $self->print_labels_form( { error => $error } ) if $error;
+
     my $dbh = C4::Context->dbh;
 
-    my $batch =
-      $batch_id
-      ? $dbh->selectall_arrayref(
-        'SELECT * FROM creator_batches WHERE batch_id = ?',
-        { Slice => {} }, $batch_id )
-      : undef;
+    my $batch;
+    if ($batch_id) {
+        my ($batch_size) = $dbh->selectrow_array(
+            'SELECT COUNT(*) FROM creator_batches WHERE batch_id = ?',
+            undef, $batch_id );
+
+        if ( $batch_size > MAX_BATCH_SIZE ) {
+            return $self->print_labels_form(
+                {
+                    error => "Batch #$batch_id contains $batch_size labels, more than the maximum of "
+                        . MAX_BATCH_SIZE . "."
+                }
+            );
+        }
+
+        $batch = $dbh->selectall_arrayref(
+            'SELECT * FROM creator_batches WHERE batch_id = ?',
+            { Slice => {} }, $batch_id );
+    }
 
     my $template = $dbh->selectrow_hashref(
         "SELECT * FROM plugin_label_maker_templates WHERE id = ?",
@@ -500,14 +552,32 @@ sub print_patron_labels {
     my $starting_label     = $args->{starting_label} || 1;
     my $barcode            = $args->{barcode};
     my $quantity           = $args->{quantity} || 1;
+
+    my $error = validate_number( 'Starting label', $args->{starting_label}, MAX_STARTING_LABEL );
+    return $self->print_patron_labels_form( { error => $error } ) if $error;
+
     my $dbh = C4::Context->dbh;
 
-    my $patronlist =
-        $patronlist_id
-        ? $dbh->selectall_arrayref(
-        'SELECT * FROM patron_list_patrons WHERE patron_list_id = ?',
-        { Slice => {} }, $patronlist_id )
-        : undef;
+    my $patronlist;
+    if ($patronlist_id) {
+        my ($patronlist_size) = $dbh->selectrow_array(
+            'SELECT COUNT(*) FROM patron_list_patrons WHERE patron_list_id = ?',
+            undef, $patronlist_id );
+
+        if ( $patronlist_size > MAX_BATCH_SIZE ) {
+            return $self->print_patron_labels_form(
+                {
+                    error => "Patron list #$patronlist_id contains $patronlist_size labels, more than the maximum of "
+                        . MAX_BATCH_SIZE . "."
+                }
+            );
+        }
+
+        $patronlist = $dbh->selectall_arrayref(
+            'SELECT * FROM patron_list_patrons WHERE patron_list_id = ?',
+            { Slice => {} }, $patronlist_id );
+    }
+
     my $template = $dbh->selectrow_hashref(
         "SELECT * FROM plugin_label_maker_patron_templates WHERE id = ?",
         undef, $template_id );

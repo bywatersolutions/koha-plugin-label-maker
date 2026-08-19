@@ -10,6 +10,10 @@
 <div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo; <a href="?class=[% CLASS %]&method=[% METHOD %]">Label Maker</a> &rsaquo; Print labels</div>
 
 <div id="doc3">
+    [% IF error %]
+        <div class="alert alert-warning">[% error | html %]</div>
+    [% END %]
+
     <form>
         <input type="hidden" name="class" value="[% CLASS %]"/>
         <input type="hidden" name="method" value="[% METHOD %]"/>
@@ -25,7 +29,7 @@
                         [% FOREACH b IN batches %]
                         [% logged_in_branchcode = Branches.GetLoggedInBranchcode() %]
                             [% IF b.branch_code == logged_in_branchcode %]
-                                    <option class="[% b.branch_code | html %]" value="[% b.batch_id %]">[% b.branch_code | html%]: Batch #[% b.batch_id %] ([% b.items_count %])</option>
+                                    <option class="[% b.branch_code | html %]" value="[% b.batch_id %]"[% IF b.items_count > max_batch_size %] disabled[% END %]>[% b.branch_code | html%]: Batch #[% b.batch_id %] ([% b.items_count %])[% IF b.items_count > max_batch_size %] - too many labels, the maximum is [% max_batch_size | html %][% END %]</option>
                             [% END %]
                         [% END %]
                     </select>
@@ -61,7 +65,7 @@
 
                 <li>
                     <label for="starting_label">Starting label: </label>
-                    <input type="number" min="1" step="1" id="starting_label" name="starting_label" value="1">
+                    <input type="number" min="1" max="[% max_starting_label | html %]" step="1" id="starting_label" name="starting_label" value="1">
                 </li>
             </ol>
         </fieldset>

@@ -10,6 +10,10 @@
 <div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo; <a href="?class=[% CLASS %]&method=[% METHOD %]">Label Maker</a> &rsaquo; Print labels</div>
 
 <div id="doc3">
+    [% IF error %]
+        <div class="alert alert-warning">[% error | html %]</div>
+    [% END %]
+
     <form>
         <input type="hidden" name="class" value="[% CLASS %]"/>
         <input type="hidden" name="method" value="[% METHOD %]"/>
@@ -23,7 +27,7 @@
                     <label for="patronbatch">Patron list: </label>
                     <select id="patronbatch" name="patronbatch">
                         [% FOREACH pl IN batches %]
-                            <option  value="[% pl.patron_list_id %]">Patron list #[% pl.patron_list_id %] ([% pl.patrons_count %])</option>
+                            <option  value="[% pl.patron_list_id %]"[% IF pl.patrons_count > max_batch_size %] disabled[% END %]>Patron list #[% pl.patron_list_id %] ([% pl.patrons_count %])[% IF pl.patrons_count > max_batch_size %] - too many labels, the maximum is [% max_batch_size | html %][% END %]</option>
                         [% END %]
                     </select>
                 </li>
@@ -58,7 +62,7 @@
 
                 <li>
                     <label for="starting_label">Starting label: </label>
-                    <input type="number" min="1" step="1" id="starting_label" name="starting_label" value="1">
+                    <input type="number" min="1" max="[% max_starting_label | html %]" step="1" id="starting_label" name="starting_label" value="1">
                 </li>
             </ol>
         </fieldset>
