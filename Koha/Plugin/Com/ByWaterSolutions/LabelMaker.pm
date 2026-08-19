@@ -69,12 +69,10 @@ sub tool {
                     starting_label  => $starting_label,
                 }
             );
-        }
-        else {
+        } else {
             $self->print_labels_form();
         }
-    }
-    elsif ( $action eq 'patronprint' ) {
+    } elsif ( $action eq 'patronprint' ) {
         my $batch           = $cgi->param('patronbatch');
         my $template        = $cgi->param('template');
         my $layout          = $cgi->param('layout');
@@ -91,12 +89,10 @@ sub tool {
                     starting_label  => $starting_label,
                 }
             );
-        }
-        else {
+        } else {
             $self->print_patron_labels_form();
         }
-    }
-    elsif ( $action eq 'print_single') {
+    } elsif ( $action eq 'print_single' ) {
         my $itemnumber      = $cgi->param('itemnumber');
         my $barcode         = $cgi->param('barcode');
         my $quantity        = $cgi->param('quantity');
@@ -117,12 +113,10 @@ sub tool {
                     starting_label  => $starting_label,
                 }
             );
-        }
-        else {
+        } else {
             $self->print_labels_form();
         }
-    }
-    elsif ( $action eq 'quickprint') {
+    } elsif ( $action eq 'quickprint' ) {
         my $barcode         = $cgi->param('barcode');
         my $template        = $cgi->param('template');
         my $layout          = $cgi->param('layout');
@@ -139,34 +133,30 @@ sub tool {
                     starting_label  => $starting_label,
                 }
             );
-        }
-        else {
+        } else {
             $self->print_quicklabels_form();
         }
-    }
-    elsif ( $action eq 'edit' ) {
-        my $type = $cgi->param('type');
-	my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
-        warn Data::Dumper::Dumper( $type );
-        unless (defined($type) && $valid_types{$type}) {
+    } elsif ( $action eq 'edit' ) {
+        my $type        = $cgi->param('type');
+        my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
+        warn Data::Dumper::Dumper($type);
+        unless ( defined($type) && $valid_types{$type} ) {
             warn "Invalid type parameter used: " . $type;
             return;
         }
-        my $id   = $cgi->param('id');
+        my $id = $cgi->param('id');
         $self->edit( { type => $type, id => $id } );
-    }
-    elsif ( $action eq 'copy' ) {
-        my $type = $cgi->param('type');
-	my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
+    } elsif ( $action eq 'copy' ) {
+        my $type        = $cgi->param('type');
+        my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
 
-        unless (defined($type) && $valid_types{$type}) {
+        unless ( defined($type) && $valid_types{$type} ) {
             warn "Invalid type parameter used: " . $type;
             return;
         }
-        my $id   = $cgi->param('id');
+        my $id = $cgi->param('id');
         $self->edit( { type => $type, id => $id, copy => 1 } );
-    }
-    elsif ( $action eq 'store' ) {
+    } elsif ( $action eq 'store' ) {
         my $type    = $cgi->param('type');
         my $id      = $cgi->param('id');
         my $name    = $cgi->param('name');
@@ -179,34 +169,30 @@ sub tool {
                 content => $content,
             }
         );
-    }
-    elsif ( $action eq 'delete' ) {
-        my $type = $cgi->param('type');
-	my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
+    } elsif ( $action eq 'delete' ) {
+        my $type        = $cgi->param('type');
+        my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
 
-        unless (defined($type) && $valid_types{$type}) {
+        unless ( defined($type) && $valid_types{$type} ) {
             warn "Invalid type parameter used: " . $type;
             return;
         }
-        my $id   = $cgi->param('id');
+        my $id = $cgi->param('id');
         $self->delete( { type => $type, id => $id } );
-    }
-    elsif ( $action eq 'wizard' ) {
-        my $type = $cgi->param('type');
-	my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
+    } elsif ( $action eq 'wizard' ) {
+        my $type        = $cgi->param('type');
+        my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
 
-        unless (defined($type) && $valid_types{$type}) {
+        unless ( defined($type) && $valid_types{$type} ) {
             warn "Invalid type parameter used: " . $type;
             return;
         }
         $self->wizard( { type => $type } );
-    }
-    elsif ( $action eq 'wizard_store' ) {
+    } elsif ( $action eq 'wizard_store' ) {
         my $type = $cgi->param('type');
         my $name = $cgi->param('name');
         $self->wizard_store( { type => $type, name => $name, cgi => $cgi } );
-    }
-    else {
+    } else {
         $self->label_maker_home();
     }
 }
@@ -224,7 +210,6 @@ sub uninstall() {
     return 1;
 }
 
-
 sub label_maker_home {
     my ( $self, $args ) = @_;
 
@@ -232,22 +217,25 @@ sub label_maker_home {
 
     my $dbh = C4::Context->dbh;
 
-    my $templates =
-      $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_templates',
-        { Slice => {} } );
+    my $templates = $dbh->selectall_arrayref(
+        'SELECT * FROM plugin_label_maker_templates',
+        { Slice => {} }
+    );
 
-    my $patron_templates =
-      $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_patron_templates',
-        { Slice => {} } );
+    my $patron_templates = $dbh->selectall_arrayref(
+        'SELECT * FROM plugin_label_maker_patron_templates',
+        { Slice => {} }
+    );
 
-    my $layouts =
-      $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_layouts',
-        { Slice => {} } );
+    my $layouts = $dbh->selectall_arrayref(
+        'SELECT * FROM plugin_label_maker_layouts',
+        { Slice => {} }
+    );
 
-    my $printer_profiles =
-      $dbh->selectall_arrayref(
+    my $printer_profiles = $dbh->selectall_arrayref(
         'SELECT * FROM plugin_label_maker_printer_profiles',
-        { Slice => {} } );
+        { Slice => {} }
+    );
 
     my $template = $self->get_template( { file => 'label_maker_home.tt' } );
 
@@ -268,9 +256,10 @@ sub edit {
     my $id   = $args->{id};
     my $copy = $args->{copy};
 
-    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
+    my %valid_types =
+        map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
 
-    unless (defined($type) && $valid_types{$type}) {
+    unless ( defined($type) && $valid_types{$type} ) {
         warn "Invalid type parameter used: " . $type;
         return;
     }
@@ -298,9 +287,10 @@ sub store {
     my $name    = $args->{name};
     my $content = $args->{content};
 
-    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
+    my %valid_types =
+        map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
 
-    unless (defined($type) && $valid_types{$type}) {
+    unless ( defined($type) && $valid_types{$type} ) {
         warn "Invalid type parameter used: " . $type;
         return;
     }
@@ -311,23 +301,23 @@ sub store {
     if ($id) {
         my $query = "UPDATE $table SET name = ?, content = ? WHERE id = ?";
         $dbh->do( $query, undef, $name, $content, $id );
-    }
-    else {
+    } else {
         my $query = "INSERT INTO $table ( name, content ) VALUES ( ?, ? )";
         $dbh->do( $query, undef, $name, $content );
     }
 
-    $self->label_maker_home({ tab => $type });
+    $self->label_maker_home( { tab => $type } );
 }
 
 sub delete {
     my ( $self, $args ) = @_;
-    my $type    = $args->{type};
-    my $id      = $args->{id};
+    my $type = $args->{type};
+    my $id   = $args->{id};
 
-    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
+    my %valid_types =
+        map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
 
-    unless (defined($type) && $valid_types{$type}) {
+    unless ( defined($type) && $valid_types{$type} ) {
         warn "Invalid type parameter used: " . $type;
         return;
     }
@@ -338,7 +328,7 @@ sub delete {
     my $query = "DELETE FROM $table WHERE id = ?";
     $dbh->do( $query, undef, $id );
 
-    $self->label_maker_home({ tab => $type });
+    $self->label_maker_home( { tab => $type } );
 }
 
 sub print_labels_form {
@@ -346,23 +336,25 @@ sub print_labels_form {
 
     my $dbh = C4::Context->dbh;
 
-    my $templates =
-      $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_templates',
-        { Slice => {} } );
+    my $templates = $dbh->selectall_arrayref(
+        'SELECT * FROM plugin_label_maker_templates',
+        { Slice => {} }
+    );
 
-    my $layouts =
-      $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_layouts',
-        { Slice => {} } );
+    my $layouts = $dbh->selectall_arrayref(
+        'SELECT * FROM plugin_label_maker_layouts',
+        { Slice => {} }
+    );
 
-    my $printer_profiles =
-      $dbh->selectall_arrayref(
+    my $printer_profiles = $dbh->selectall_arrayref(
         'SELECT * FROM plugin_label_maker_printer_profiles',
-        { Slice => {} } );
+        { Slice => {} }
+    );
 
-    my $batches =
-      $dbh->selectall_arrayref(
+    my $batches = $dbh->selectall_arrayref(
         'SELECT batch_id, COUNT(batch_id) AS items_count, branch_code, MAX(timestamp) AS timestamp FROM creator_batches WHERE creator = "Labels" GROUP BY batch_id, branch_code ORDER BY timestamp DESC',
-        { Slice => {} } );
+        { Slice => {} }
+    );
 
     my $template = $self->get_template( { file => 'print_labels_form.tt' } );
 
@@ -384,23 +376,25 @@ sub print_patron_labels_form {
 
     my $dbh = C4::Context->dbh;
 
-    my $patron_templates =
-        $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_patron_templates',
-        { Slice => {} } );
+    my $patron_templates = $dbh->selectall_arrayref(
+        'SELECT * FROM plugin_label_maker_patron_templates',
+        { Slice => {} }
+    );
 
-    my $layouts =
-        $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_layouts',
-        { Slice => {} } );
+    my $layouts = $dbh->selectall_arrayref(
+        'SELECT * FROM plugin_label_maker_layouts',
+        { Slice => {} }
+    );
 
-    my $printer_profiles =
-        $dbh->selectall_arrayref(
+    my $printer_profiles = $dbh->selectall_arrayref(
         'SELECT * FROM plugin_label_maker_printer_profiles',
-        { Slice => {} } );
+        { Slice => {} }
+    );
 
-    my $patron_batches =
-        $dbh->selectall_arrayref(
+    my $patron_batches = $dbh->selectall_arrayref(
         'SELECT patron_list_id, COUNT(patron_list_id) as patrons_count FROM patron_list_patrons GROUP BY patron_list_id ORDER BY patron_list_id DESC',
-        { Slice => {} } );
+        { Slice => {} }
+    );
 
     my $template = $self->get_template( { file => 'print_patron_labels_form.tt' } );
     $template->param(
@@ -421,18 +415,20 @@ sub print_quicklabels_form {
 
     my $dbh = C4::Context->dbh;
 
-    my $templates =
-      $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_templates',
-        { Slice => {} } );
+    my $templates = $dbh->selectall_arrayref(
+        'SELECT * FROM plugin_label_maker_templates',
+        { Slice => {} }
+    );
 
-    my $layouts =
-      $dbh->selectall_arrayref( 'SELECT * FROM plugin_label_maker_layouts',
-        { Slice => {} } );
+    my $layouts = $dbh->selectall_arrayref(
+        'SELECT * FROM plugin_label_maker_layouts',
+        { Slice => {} }
+    );
 
-    my $printer_profiles =
-      $dbh->selectall_arrayref(
+    my $printer_profiles = $dbh->selectall_arrayref(
         'SELECT * FROM plugin_label_maker_printer_profiles',
-        { Slice => {} } );
+        { Slice => {} }
+    );
 
     my $template = $self->get_template( { file => 'print_quicklabels_form.tt' } );
 
@@ -477,9 +473,11 @@ sub print_labels {
     my $barcode            = $args->{barcode};
     my $quantity           = $args->{quantity} || 1;
 
-    my $error =
-         validate_number( 'Starting label', $args->{starting_label}, MAX_STARTING_LABEL )
-      || validate_number( 'Quantity',       $args->{quantity},       MAX_QUANTITY );
+    my $error = validate_number(
+        'Starting label',
+        $args->{starting_label},
+        MAX_STARTING_LABEL
+    ) || validate_number( 'Quantity', $args->{quantity}, MAX_QUANTITY );
     return $self->print_labels_form( { error => $error } ) if $error;
 
     my $dbh = C4::Context->dbh;
@@ -488,7 +486,8 @@ sub print_labels {
     if ($batch_id) {
         my ($batch_size) = $dbh->selectrow_array(
             'SELECT COUNT(*) FROM creator_batches WHERE batch_id = ?',
-            undef, $batch_id );
+            undef, $batch_id
+        );
 
         if ( $batch_size > MAX_BATCH_SIZE ) {
             return $self->print_labels_form(
@@ -501,34 +500,38 @@ sub print_labels {
 
         $batch = $dbh->selectall_arrayref(
             'SELECT * FROM creator_batches WHERE batch_id = ?',
-            { Slice => {} }, $batch_id );
+            { Slice => {} }, $batch_id
+        );
     }
 
     my $template = $dbh->selectrow_hashref(
         "SELECT * FROM plugin_label_maker_templates WHERE id = ?",
-        undef, $template_id );
+        undef, $template_id
+    );
     my $layout = $dbh->selectrow_hashref(
         "SELECT * FROM plugin_label_maker_layouts WHERE id = ?",
-        undef, $layout_id );
+        undef, $layout_id
+    );
     my $printer_profile = $dbh->selectrow_hashref(
         "SELECT * FROM plugin_label_maker_printer_profiles WHERE id = ?",
-        undef, $printer_profile_id );
+        undef, $printer_profile_id
+    );
 
     my @items;
 
     push( @items, undef ) for ( 1 .. $starting_label - 1 );
 
-    if ( $batch ) {
+    if ($batch) {
         foreach my $b (@$batch) {
             my $item = Koha::Items->find( $b->{item_number} );
             push( @items, $item );
         }
-    } elsif ( $itemnumber ) {
-            my $item = Koha::Items->find( $itemnumber );
-            push( @items, $item ) for 1..$quantity;
-    } elsif ( $barcode ) {
-            my $item = Koha::Items->find( { barcode => $barcode } );
-            push( @items, $item ) for 1..$quantity;
+    } elsif ($itemnumber) {
+        my $item = Koha::Items->find($itemnumber);
+        push( @items, $item ) for 1 .. $quantity;
+    } elsif ($barcode) {
+        my $item = Koha::Items->find( { barcode => $barcode } );
+        push( @items, $item ) for 1 .. $quantity;
     }
 
     my $page_template = $self->get_template( { file => 'print_labels.tt' } );
@@ -553,7 +556,11 @@ sub print_patron_labels {
     my $barcode            = $args->{barcode};
     my $quantity           = $args->{quantity} || 1;
 
-    my $error = validate_number( 'Starting label', $args->{starting_label}, MAX_STARTING_LABEL );
+    my $error = validate_number(
+        'Starting label',
+        $args->{starting_label},
+        MAX_STARTING_LABEL
+    );
     return $self->print_patron_labels_form( { error => $error } ) if $error;
 
     my $dbh = C4::Context->dbh;
@@ -562,7 +569,8 @@ sub print_patron_labels {
     if ($patronlist_id) {
         my ($patronlist_size) = $dbh->selectrow_array(
             'SELECT COUNT(*) FROM patron_list_patrons WHERE patron_list_id = ?',
-            undef, $patronlist_id );
+            undef, $patronlist_id
+        );
 
         if ( $patronlist_size > MAX_BATCH_SIZE ) {
             return $self->print_patron_labels_form(
@@ -575,18 +583,23 @@ sub print_patron_labels {
 
         $patronlist = $dbh->selectall_arrayref(
             'SELECT * FROM patron_list_patrons WHERE patron_list_id = ?',
-            { Slice => {} }, $patronlist_id );
+            { Slice => {} },
+            $patronlist_id
+        );
     }
 
     my $template = $dbh->selectrow_hashref(
         "SELECT * FROM plugin_label_maker_patron_templates WHERE id = ?",
-        undef, $template_id );
+        undef, $template_id
+    );
     my $layout = $dbh->selectrow_hashref(
         "SELECT * FROM plugin_label_maker_layouts WHERE id = ?",
-        undef, $layout_id );
+        undef, $layout_id
+    );
     my $printer_profile = $dbh->selectrow_hashref(
         "SELECT * FROM plugin_label_maker_printer_profiles WHERE id = ?",
-        undef, $printer_profile_id );
+        undef, $printer_profile_id
+    );
 
     my @patrons;
 
@@ -594,7 +607,7 @@ sub print_patron_labels {
 
     my $page_template = $self->get_template( { file => 'print_patron_labels.tt' } );
 
-    if ( $patronlist ) {
+    if ($patronlist) {
         foreach my $pl (@$patronlist) {
             my $patron = Koha::Patrons->find( $pl->{borrowernumber} );
             push( @patrons, $patron );
@@ -621,21 +634,25 @@ sub print_quicklabels {
     my $dbh = C4::Context->dbh;
 
     #remove leading whitespaces
-    $this_barcode  =~ s/^\s+//;
+    $this_barcode =~ s/^\s+//;
     my $barcode = $dbh->selectrow_hashref(
         "SELECT * from items where barcode = ?",
-        undef, $this_barcode );
+        undef, $this_barcode
+    );
     my $template = $dbh->selectrow_hashref(
         "SELECT * FROM plugin_label_maker_templates WHERE id = ?",
-        undef, $template_id );
+        undef, $template_id
+    );
     my $layout = $dbh->selectrow_hashref(
         "SELECT * FROM plugin_label_maker_layouts WHERE id = ?",
-        undef, $layout_id );
+        undef, $layout_id
+    );
     my $printer_profile = $dbh->selectrow_hashref(
         "SELECT * FROM plugin_label_maker_printer_profiles WHERE id = ?",
-        undef, $printer_profile_id );
+        undef, $printer_profile_id
+    );
 
-    my $item = Koha::Items->find( $barcode->{itemnumber} );
+    my $item          = Koha::Items->find( $barcode->{itemnumber} );
     my $page_template = $self->get_template( { file => 'print_labels.tt' } );
 
     $page_template->param(
@@ -647,6 +664,7 @@ sub print_quicklabels {
 
     $self->output_html( $page_template->output() );
 }
+
 =head2
 
     This method below attaches to any Koha::Item objects,
@@ -671,16 +689,17 @@ sub wizard {
     my ( $self, $args ) = @_;
     my $type = $args->{type};
 
-    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
+    my %valid_types =
+        map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
 
-    unless (defined($type) && $valid_types{$type}) {
+    unless ( defined($type) && $valid_types{$type} ) {
         warn "Invalid type parameter used: " . $type;
         return;
     }
     my $filename = qq{wizard_$type.tt};
 
-    my @item_columns = Koha::Items->columns();
-    my @biblio_columns = Koha::Biblios->columns();
+    my @item_columns       = Koha::Items->columns();
+    my @biblio_columns     = Koha::Biblios->columns();
     my @biblioitem_columns = Koha::Biblioitems->columns();
 
     my $template = $self->get_template( { file => $filename } );
@@ -699,9 +718,10 @@ sub wizard {
 sub wizard_store {
     my ( $self, $args ) = @_;
     my $type = $args->{type};
-    my %valid_types = map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
+    my %valid_types =
+        map { $_ => 1 } qw(templates patron_templates layouts printer_profiles);
 
-    unless (defined($type) && $valid_types{$type}) {
+    unless ( defined($type) && $valid_types{$type} ) {
         warn "Invalid type parameter used: " . $type;
         return;
     }
@@ -714,11 +734,11 @@ sub wizard_store {
 
     my $template = $self->get_template( { file => $filename } );
 
-    $template->param( %$params );
+    $template->param(%$params);
 
     my $content = $template->output();
 
-    my $dbh = C4::Context->dbh;
+    my $dbh   = C4::Context->dbh;
     my $table = "plugin_label_maker_$type";
     my $query = "INSERT INTO $table ( name, content ) VALUES ( ?, ? )";
     $dbh->do( $query, undef, $name, $content );
@@ -731,38 +751,45 @@ sub upgrade {
 
     my $dbh = C4::Context->dbh;
 
-    $dbh->do(q{
+    $dbh->do(
+        q{
         CREATE TABLE IF NOT EXISTS plugin_label_maker_templates (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         content TEXT
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    });
+    }
+    );
 
-    $dbh->do(q{
+    $dbh->do(
+        q{
         CREATE TABLE IF NOT EXISTS plugin_label_maker_patron_templates (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         content TEXT
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    });
+    }
+    );
 
-    $dbh->do(q{
+    $dbh->do(
+        q{
         CREATE TABLE IF NOT EXISTS plugin_label_maker_layouts (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         content TEXT
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    });
+    }
+    );
 
-    $dbh->do(q{
+    $dbh->do(
+        q{
         CREATE TABLE IF NOT EXISTS plugin_label_maker_printer_profiles (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         content TEXT
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    });
-
+    }
+    );
 
     return 1;
 }
@@ -772,39 +799,48 @@ sub install() {
 
     my $dbh = C4::Context->dbh;
 
-    $dbh->do(q{
+    $dbh->do(
+        q{
         CREATE TABLE IF NOT EXISTS plugin_label_maker_templates (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         content TEXT
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    });
+    }
+    );
 
-    $dbh->do(q{
+    $dbh->do(
+        q{
         CREATE TABLE IF NOT EXISTS plugin_label_maker_patron_templates (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         content TEXT
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    });
+    }
+    );
 
-    $dbh->do(q{
+    $dbh->do(
+        q{
         CREATE TABLE IF NOT EXISTS plugin_label_maker_layouts (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         content TEXT
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    });
+    }
+    );
 
-    $dbh->do(q{
+    $dbh->do(
+        q{
         CREATE TABLE IF NOT EXISTS plugin_label_maker_printer_profiles (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         content TEXT
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    });
+    }
+    );
 
-    $dbh->do(q|
+    $dbh->do(
+        q|
         INSERT IGNORE INTO `plugin_label_maker_layouts` (`id`, `name`, `content`) VALUES
 
 (1,'Avery 5630','html, body, div, span, h1 {
@@ -913,9 +949,11 @@ body {
 
   background-color: blue;
 }');
-    |);
+    |
+    );
 
-    $dbh->do(q|
+    $dbh->do(
+        q|
         INSERT IGNORE INTO `plugin_label_maker_templates` (`id`, `name`, `content`) VALUES
 (1,'Avery Standard Labels','[% FOREACH item IN items %]
     [% IF loop.index % 30 == 0 %]
@@ -977,9 +1015,11 @@ body {
     [% IF loop.last %]</span>[% END %]
     [% SET label_index = label_index + 1 %]
 [% END %]');
-    |);
+    |
+    );
 
-    $dbh->do(q|
+    $dbh->do(
+        q|
         INSERT IGNORE INTO `plugin_label_maker_patron_templates` (`id`, `name`, `content`) VALUES
 (1,'Avery Standard Labels','[% FOREACH patron IN patrons %]
     [% IF loop.index % 30 == 0 %]
@@ -1006,7 +1046,8 @@ body {
     [% IF loop.last %]</span>[% END %]
     [% SET label_index = label_index + 1 %]
 [% END %]');
-    |);
+    |
+    );
     return 1;
 }
 
