@@ -16,7 +16,7 @@ use Koha::Biblioitems;
 # scanned into the starting label field builds a list of trillions of elements
 # and uses up all the memory on the server.
 use constant MAX_STARTING_LABEL => 100;
-use constant MAX_QUANTITY       => 100;
+use constant MAX_QUANTITY       => 500;
 use constant MAX_BATCH_SIZE     => 5000;
 
 ## Here we set our plugin version
